@@ -24,18 +24,18 @@ public class ProviderCacheProperties {
     }
 
     public abstract static class StoreProperties {
-        private String storeName = "";
+        private String store = "";
         private String host;
         private Integer port;
         private String password;
         private String database;
 
-        public String getStoreName() {
-            return storeName;
+        public String getStore() {
+            return store;
         }
 
-        public void setStoreName(String storeName) {
-            this.storeName = storeName;
+        public void setStore(String store) {
+            this.store = store;
         }
 
         public String getHost() {

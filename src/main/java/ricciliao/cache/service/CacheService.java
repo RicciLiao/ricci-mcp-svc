@@ -1,7 +1,7 @@
 package ricciliao.cache.service;
 
 
-import ricciliao.cache.pojo.ProviderCacheStore;
+import ricciliao.cache.pojo.ProviderOp;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
 import ricciliao.x.cache.pojo.ProviderInfo;
 import ricciliao.x.cache.query.CacheBatchQuery;
@@ -9,22 +9,22 @@ import ricciliao.x.cache.query.CacheBatchQuery;
 public interface CacheService {
 
     String create(ConsumerIdentifier identifier,
-                  ProviderCacheStore store);
+                  ProviderOp.Single operation);
 
     boolean update(ConsumerIdentifier identifier,
-                   ProviderCacheStore store);
+                   ProviderOp.Single updating);
 
     boolean delete(ConsumerIdentifier identifier, String id);
 
-    ProviderCacheStore get(ConsumerIdentifier identifier, String id);
+    ProviderOp.Single get(ConsumerIdentifier identifier, String id);
 
-    ProviderCacheStore.Batch list(ConsumerIdentifier identifier, CacheBatchQuery query);
+    ProviderOp.Batch list(ConsumerIdentifier identifier, CacheBatchQuery query);
 
     boolean delete(ConsumerIdentifier identifier, CacheBatchQuery query);
 
     ProviderInfo providerInfo(ConsumerIdentifier identifier);
 
     boolean create(ConsumerIdentifier identifier,
-                   ProviderCacheStore.Batch storeList);
+                   ProviderOp.Batch operation);
 
 }

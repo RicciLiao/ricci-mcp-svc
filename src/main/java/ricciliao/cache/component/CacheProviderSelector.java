@@ -2,7 +2,6 @@ package ricciliao.cache.component;
 
 
 import jakarta.annotation.Nullable;
-import ricciliao.cache.provider.AbstractCacheProvider;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
 
 import java.util.HashMap;
@@ -10,7 +9,7 @@ import java.util.Map;
 
 public class CacheProviderSelector {
 
-    private final Map<ConsumerIdentifier, AbstractCacheProvider> cacheProviderMap;
+    private final Map<ConsumerIdentifier, CacheProvider> cacheProviderMap;
     private final Map<ConsumerIdentifier, Boolean> cacheStaticalMap;
 
     public CacheProviderSelector() {
@@ -18,7 +17,7 @@ public class CacheProviderSelector {
         this.cacheStaticalMap = new HashMap<>();
     }
 
-    public Map<ConsumerIdentifier, AbstractCacheProvider> getCacheProviderMap() {
+    public Map<ConsumerIdentifier, CacheProvider> getCacheProviderMap() {
         return cacheProviderMap;
     }
 
@@ -26,7 +25,7 @@ public class CacheProviderSelector {
         return cacheStaticalMap;
     }
 
-    public AbstractCacheProvider selectProvider(@Nullable ConsumerIdentifier identifier) {
+    public CacheProvider selectProvider(@Nullable ConsumerIdentifier identifier) {
 
         return getCacheProviderMap().get(identifier);
     }

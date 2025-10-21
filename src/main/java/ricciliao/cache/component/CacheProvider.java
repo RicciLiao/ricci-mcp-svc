@@ -1,9 +1,10 @@
-package ricciliao.cache.provider;
+package ricciliao.cache.component;
 
 
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import ricciliao.cache.pojo.ProviderCacheStore;
+import ricciliao.cache.pojo.ProviderOp;
 import ricciliao.cache.properties.ProviderCacheProperties;
 import ricciliao.x.cache.pojo.CacheStore;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
@@ -16,12 +17,12 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
-public abstract class AbstractCacheProvider {
+public abstract class CacheProvider {
 
     private final CacheProviderConstruct constr;
     private final Map<CacheQuery.Property, Field> property2NameSortMap = new EnumMap<>(CacheQuery.Property.class);
 
-    protected AbstractCacheProvider(CacheProviderConstruct cacheProviderConstruct) {
+    protected CacheProvider(CacheProviderConstruct cacheProviderConstruct) {
         this.constr = cacheProviderConstruct;
         Field[] fields = CacheStore.class.getDeclaredFields();
         Arrays.stream(fields)
@@ -57,19 +58,19 @@ public abstract class AbstractCacheProvider {
         return this.constr.storeProps.getAddition();
     }
 
-    public abstract boolean create(ProviderCacheStore store);
+    public abstract boolean create(ProviderOp.Single operation);
 
-    public abstract boolean update(ProviderCacheStore store);
+    public abstract boolean update(ProviderOp.Single operation);
 
-    public abstract ProviderCacheStore get(String key);
+    public abstract ProviderOp.Single get(String key);
 
     public abstract boolean delete(String key);
 
-    public abstract ProviderCacheStore.Batch list(CacheBatchQuery query);
+    public abstract ProviderOp.Batch list(CacheBatchQuery query);
 
-    public boolean create(ProviderCacheStore.Batch batch) {
-        for (ProviderCacheStore store : batch.batch()) {
-            if (!this.create(store)) {
+    public boolean create(ProviderOp.Batch operation) {
+        for (ProviderCacheStore cache : operation.getData()) {
+            if (!this.create(new ProviderOp.Single(operation.getTtlOfSeconds(), cache))) {
 
                 return false;
             }

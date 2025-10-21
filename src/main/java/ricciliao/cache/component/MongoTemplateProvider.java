@@ -1,4 +1,4 @@
-package ricciliao.cache.provider;
+package ricciliao.cache.component;
 
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import ricciliao.cache.common.CacheConstants;
 import ricciliao.cache.pojo.ProviderCacheStore;
+import ricciliao.cache.pojo.ProviderOp;
 import ricciliao.x.cache.annotation.CacheId;
 import ricciliao.x.cache.pojo.CacheStore;
 import ricciliao.x.cache.pojo.ProviderInfo;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class MongoTemplateProvider extends AbstractCacheProvider {
+public class MongoTemplateProvider extends CacheProvider {
 
     private final MongoTemplateProviderConstruct constr;
     private final String cacheIdName;
@@ -45,7 +46,7 @@ public class MongoTemplateProvider extends AbstractCacheProvider {
             throw new BeanCreationException(
                     String.format(
                             "Initialize MongoTemplateProvider for collection: [%s] failed! Can not identify the CacheKey.",
-                            this.getStoreProps().getStoreName()
+                            this.getStoreProps().getStore()
                     )
             );
         }
@@ -53,31 +54,37 @@ public class MongoTemplateProvider extends AbstractCacheProvider {
     }
 
     @Override
-    public boolean create(ProviderCacheStore store) {
-        this.constr.mongoTemplate.insert(store, this.getStoreProps().getStoreName());
+    public boolean create(ProviderOp.Single operation) {
+        this.constr.mongoTemplate.insert(operation.getData(), this.getStoreProps().getStore());
 
         return true;
     }
 
     @Override
-    public boolean update(ProviderCacheStore store) {
+    public boolean update(ProviderOp.Single operation) {
         UpdateResult result = this.constr.mongoTemplate.replace(
-                Query.query(Criteria.where(this.cacheIdName).is(store.getCacheKey())),
-                store,
-                this.getStoreProps().getStoreName()
+                Query.query(Criteria.where(this.cacheIdName).is(operation.getData().getCacheKey())),
+                operation.getData(),
+                this.getStoreProps().getStore()
         );
 
         return result.getModifiedCount() == 1;
     }
 
     @Override
-    public ProviderCacheStore get(String key) {
+    public ProviderOp.Single get(String key) {
+        ProviderCacheStore cache =
+                this.constr.mongoTemplate.findOne(
+                        Query.query(Criteria.where(this.cacheIdName).is(key)),
+                        ProviderCacheStore.class,
+                        this.getStoreProps().getStore()
+                );
+        if (Objects.nonNull(cache)) {
 
-        return this.constr.mongoTemplate.findOne(
-                Query.query(Criteria.where(this.cacheIdName).is(key)),
-                ProviderCacheStore.class,
-                this.getStoreProps().getStoreName()
-        );
+            return new ProviderOp.Single(this.getAdditionalProps().getTtl().toSeconds(), cache);
+        }
+
+        return null;
     }
 
     @Override
@@ -87,24 +94,26 @@ public class MongoTemplateProvider extends AbstractCacheProvider {
                 this.constr.mongoTemplate.findAndRemove(
                         Query.query(Criteria.where(this.cacheIdName).is(key)),
                         ProviderCacheStore.class,
-                        this.getStoreProps().getStoreName()
+                        this.getStoreProps().getStore()
                 )
         );
     }
 
     @Override
-    public ProviderCacheStore.Batch list(CacheBatchQuery query) {
+    public ProviderOp.Batch list(CacheBatchQuery query) {
+        List<ProviderCacheStore> data =
+                this.constr.mongoTemplate.find(
+                        this.toQuery(query),
+                        ProviderCacheStore.class,
+                        this.getStoreProps().getStore()
+                );
 
-        return new ProviderCacheStore.Batch(this.constr.mongoTemplate.find(
-                this.toQuery(query),
-                ProviderCacheStore.class,
-                this.getStoreProps().getStoreName()
-        ));
+        return new ProviderOp.Batch(this.getStoreProps().getAddition().getTtl().toSeconds(), data.toArray(new ProviderCacheStore[0]));
     }
 
     @Override
     public boolean delete(CacheBatchQuery query) {
-        this.constr.mongoTemplate.remove(this.toQuery(query), this.getStoreProps().getStoreName());
+        this.constr.mongoTemplate.remove(this.toQuery(query), this.getStoreProps().getStore());
 
         return false;
     }
@@ -115,13 +124,13 @@ public class MongoTemplateProvider extends AbstractCacheProvider {
                 this.constr.mongoTemplate.findOne(
                         new Query().with(Sort.by(Sort.Order.desc("updatedDtm"))).limit(1),
                         ProviderCacheStore.class,
-                        this.getStoreProps().getStoreName()
+                        this.getStoreProps().getStore()
                 );
         ProviderInfo result = new ProviderInfo(this.getConsumerIdentifier());
 
         if (Objects.nonNull(maxUpdatedDtm)) {
             result.setMaxUpdatedDtm(maxUpdatedDtm.getUpdatedDtm());
-            result.setCount(this.constr.mongoTemplate.count(new Query(), this.getStoreProps().getStoreName()));
+            result.setCount(this.constr.mongoTemplate.count(new Query(), this.getStoreProps().getStore()));
         }
 
         return result;
