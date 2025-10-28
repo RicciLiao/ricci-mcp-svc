@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ricciliao.cache.pojo.ProviderOp;
+import ricciliao.cache.pojo.ProviderOperation;
 import ricciliao.cache.service.CacheService;
 import ricciliao.x.cache.annotation.ConsumerId;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
@@ -36,31 +36,31 @@ public class CacheOperationController {
     @Operation(description = "Create a new record for the consumer(with identifier).")
     @PostMapping("")
     public Response<ResponseData> create(@ConsumerId ConsumerIdentifier identifier,
-                                         @RequestBody ProviderOp.Single operation) {
+                                         @RequestBody ProviderOperation.Single single) {
 
-        return ResponseUtils.success(SimpleData.of(cacheService.create(identifier, operation)));
+        return ResponseUtils.success(SimpleData.of(cacheService.create(identifier, single)));
     }
 
     @Operation(description = "Update a existed record for the consumer(with identifier).")
     @PutMapping("")
     public Response<ResponseData> update(@ConsumerId ConsumerIdentifier identifier,
-                                           @RequestBody ProviderOp.Single operation) {
+                                         @RequestBody ProviderOperation.Single single) {
 
-        return ResponseUtils.success(SimpleData.of(cacheService.update(identifier, operation)));
+        return ResponseUtils.success(SimpleData.of(cacheService.update(identifier, single)));
     }
 
     @Operation(description = "Delete a existed record for the consumer(with identifier).")
     @DeleteMapping("/{id}")
     public Response<ResponseData> delete(@ConsumerId ConsumerIdentifier identifier,
-                                           @PathVariable String id) {
+                                         @PathVariable String id) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.delete(identifier, id)));
     }
 
     @Operation(description = "Retrieve a existed record for the consumer(with identifier).")
     @GetMapping("/{id}")
-    public ProviderOp.Single get(@ConsumerId ConsumerIdentifier identifier,
-                                 @PathVariable(name = "id") String id) {
+    public ProviderOperation.Single get(@ConsumerId ConsumerIdentifier identifier,
+                                        @PathVariable(name = "id") String id) {
 
         return cacheService.get(identifier, id);
     }
@@ -68,23 +68,23 @@ public class CacheOperationController {
     @Operation(description = "Batch create new records for the consumer(with identifier).")
     @PostMapping("/batch")
     public Response<ResponseData> create(@ConsumerId ConsumerIdentifier identifier,
-                                           @RequestBody ProviderOp.Batch operation) {
+                                         @RequestBody ProviderOperation.Batch batch) {
 
-        return ResponseUtils.success(SimpleData.of(cacheService.create(identifier, operation)));
+        return ResponseUtils.success(SimpleData.of(cacheService.create(identifier, batch)));
     }
 
     @Operation(description = "Batch delete existed records for the consumer(with identifier).")
     @DeleteMapping("/batch")
     public Response<ResponseData> delete(@ConsumerId ConsumerIdentifier identifier,
-                                           @RequestBody CacheBatchQuery query) {
+                                         @RequestBody CacheBatchQuery query) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.delete(identifier, query)));
     }
 
     @Operation(description = "Retrieve list of existed record for the consumer(with identifier).")
     @PostMapping("/list")
-    public ProviderOp.Batch list(@ConsumerId ConsumerIdentifier identifier,
-                                 @RequestBody CacheBatchQuery query) {
+    public ProviderOperation.Batch list(@ConsumerId ConsumerIdentifier identifier,
+                                        @RequestBody CacheBatchQuery query) {
 
         return cacheService.list(identifier, query);
     }

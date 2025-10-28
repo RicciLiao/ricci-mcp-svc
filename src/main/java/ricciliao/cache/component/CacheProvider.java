@@ -1,14 +1,15 @@
 package ricciliao.cache.component;
 
 
+import jakarta.annotation.Nonnull;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.BeanCreationException;
-import ricciliao.cache.pojo.ProviderCacheStore;
-import ricciliao.cache.pojo.ProviderOp;
+import ricciliao.cache.pojo.ProviderCache;
+import ricciliao.cache.pojo.ProviderOperation;
 import ricciliao.cache.properties.ProviderCacheProperties;
-import ricciliao.x.cache.pojo.CacheStore;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
 import ricciliao.x.cache.pojo.ProviderInfo;
+import ricciliao.x.cache.pojo.StoreCache;
 import ricciliao.x.cache.query.CacheBatchQuery;
 import ricciliao.x.cache.query.CacheQuery;
 
@@ -24,7 +25,7 @@ public abstract class CacheProvider {
 
     protected CacheProvider(CacheProviderConstruct cacheProviderConstruct) {
         this.constr = cacheProviderConstruct;
-        Field[] fields = CacheStore.class.getDeclaredFields();
+        Field[] fields = StoreCache.class.getDeclaredFields();
         Arrays.stream(fields)
                 .filter(field -> field.isAnnotationPresent(CacheQuery.Support.class))
                 .forEach(field -> {
@@ -58,19 +59,21 @@ public abstract class CacheProvider {
         return this.constr.storeProps.getAddition();
     }
 
-    public abstract boolean create(ProviderOp.Single operation);
+    public abstract boolean create(ProviderOperation.Single single);
 
-    public abstract boolean update(ProviderOp.Single operation);
+    public abstract boolean update(ProviderOperation.Single single);
 
-    public abstract ProviderOp.Single get(String key);
+    @Nonnull
+    public abstract ProviderOperation.Single get(String key);
 
     public abstract boolean delete(String key);
 
-    public abstract ProviderOp.Batch list(CacheBatchQuery query);
+    @Nonnull
+    public abstract ProviderOperation.Batch list(CacheBatchQuery query);
 
-    public boolean create(ProviderOp.Batch operation) {
-        for (ProviderCacheStore cache : operation.getData()) {
-            if (!this.create(new ProviderOp.Single(operation.getTtlOfSeconds(), cache))) {
+    public boolean create(ProviderOperation.Batch batch) {
+        for (ProviderCache cache : batch.getData()) {
+            if (!this.create(ProviderOperation.of(cache))) {
 
                 return false;
             }

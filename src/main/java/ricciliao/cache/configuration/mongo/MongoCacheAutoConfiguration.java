@@ -5,9 +5,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.MongoDriverInformation;
 import com.mongodb.client.MongoClients;
-import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,12 +19,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import ricciliao.cache.component.CacheProviderSelector;
 import ricciliao.cache.component.MongoTemplateProvider;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
-import ricciliao.x.component.utils.CoreUtils;
 import ricciliao.x.starter.PropsAutoConfiguration;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
 
 @PropsAutoConfiguration(
         properties = MongoCacheAutoProperties.class,
@@ -78,9 +71,7 @@ public class MongoCacheAutoConfiguration {
                 );
 
         MongoCustomConversions customConversions =
-                MongoCustomConversions.create(adapter-> {
-                    adapter.registerConverter(new LocalDateTime2Date());
-                    adapter.registerConverter(new Date2LocalDateTime());
+                MongoCustomConversions.create(adapter -> {
                 });
 
         MongoMappingContext mappingContext = new MongoMappingContext();
@@ -100,39 +91,11 @@ public class MongoCacheAutoConfiguration {
 
         mongoTemplate.indexOps(props.getStore()).ensureIndex(
                 new Index()
-                        .on("effectedDtm", Sort.Direction.ASC)
+                        .on("ttlEffectedDtm", Sort.Direction.ASC)
                         .expire(props.getAddition().getTtl())
                         .background()
         );
 
         return mongoTemplate;
     }
-
-    static class LocalDateTime2Date implements Converter<LocalDateTime, Date> {
-
-        @Override
-        public Date convert(@Nullable LocalDateTime source) {
-            Long timestamp = CoreUtils.toLong(source);
-            if (Objects.isNull(timestamp)) {
-
-                return null;
-            }
-
-            return new Date(timestamp);
-        }
-    }
-
-    static class Date2LocalDateTime implements Converter<Date, LocalDateTime> {
-
-        @Override
-        public LocalDateTime convert(@Nullable Date source) {
-            if (Objects.isNull(source)) {
-
-                return null;
-            }
-
-            return CoreUtils.toLocalDateTime(source.getTime());
-        }
-    }
-
 }

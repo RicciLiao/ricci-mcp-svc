@@ -1,6 +1,7 @@
 package ricciliao.cache.component;
 
 import com.mongodb.client.result.UpdateResult;
+import jakarta.annotation.Nonnull;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -9,11 +10,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import ricciliao.cache.common.CacheConstants;
-import ricciliao.cache.pojo.ProviderCacheStore;
-import ricciliao.cache.pojo.ProviderOp;
+import ricciliao.cache.pojo.ProviderCache;
+import ricciliao.cache.pojo.ProviderOperation;
 import ricciliao.x.cache.annotation.CacheId;
-import ricciliao.x.cache.pojo.CacheStore;
 import ricciliao.x.cache.pojo.ProviderInfo;
+import ricciliao.x.cache.pojo.StoreCache;
 import ricciliao.x.cache.query.CacheBatchQuery;
 
 import java.lang.reflect.Field;
@@ -30,14 +31,14 @@ public class MongoTemplateProvider extends CacheProvider {
         super(mongoTemplateProviderConstruct);
         this.constr = mongoTemplateProviderConstruct;
 
-        Field[] fields = ProviderCacheStore.class.getDeclaredFields();
+        Field[] fields = ProviderCache.class.getDeclaredFields();
         List<Field> keyFieldList =
                 Arrays.stream(fields)
                         .filter(field -> field.isAnnotationPresent(CacheId.class))
                         .toList();
         if (CollectionUtils.isEmpty(keyFieldList)) {
             keyFieldList =
-                    Arrays.stream(CacheStore.class.getDeclaredFields())
+                    Arrays.stream(StoreCache.class.getDeclaredFields())
                             .filter(field -> field.isAnnotationPresent(CacheId.class))
                             .toList();
         }
@@ -54,37 +55,34 @@ public class MongoTemplateProvider extends CacheProvider {
     }
 
     @Override
-    public boolean create(ProviderOp.Single operation) {
-        this.constr.mongoTemplate.insert(operation.getData(), this.getStoreProps().getStore());
+    public boolean create(ProviderOperation.Single single) {
+        this.constr.mongoTemplate.insert(single.getData(), this.getStoreProps().getStore());
 
         return true;
     }
 
     @Override
-    public boolean update(ProviderOp.Single operation) {
+    public boolean update(ProviderOperation.Single single) {
         UpdateResult result = this.constr.mongoTemplate.replace(
-                Query.query(Criteria.where(this.cacheIdName).is(operation.getData().getCacheKey())),
-                operation.getData(),
+                Query.query(Criteria.where(this.cacheIdName).is(single.getData().getCacheKey())),
+                single.getData(),
                 this.getStoreProps().getStore()
         );
 
         return result.getModifiedCount() == 1;
     }
 
+    @Nonnull
     @Override
-    public ProviderOp.Single get(String key) {
-        ProviderCacheStore cache =
+    public ProviderOperation.Single get(String key) {
+
+        return ProviderOperation.of(
                 this.constr.mongoTemplate.findOne(
                         Query.query(Criteria.where(this.cacheIdName).is(key)),
-                        ProviderCacheStore.class,
+                        ProviderCache.class,
                         this.getStoreProps().getStore()
-                );
-        if (Objects.nonNull(cache)) {
-
-            return new ProviderOp.Single(this.getAdditionalProps().getTtl().toSeconds(), cache);
-        }
-
-        return null;
+                )
+        );
     }
 
     @Override
@@ -93,22 +91,27 @@ public class MongoTemplateProvider extends CacheProvider {
         return Objects.nonNull(
                 this.constr.mongoTemplate.findAndRemove(
                         Query.query(Criteria.where(this.cacheIdName).is(key)),
-                        ProviderCacheStore.class,
+                        ProviderCache.class,
                         this.getStoreProps().getStore()
                 )
         );
     }
 
+    @Nonnull
     @Override
-    public ProviderOp.Batch list(CacheBatchQuery query) {
-        List<ProviderCacheStore> data =
+    public ProviderOperation.Batch list(CacheBatchQuery query) {
+        List<ProviderCache> data =
                 this.constr.mongoTemplate.find(
                         this.toQuery(query),
-                        ProviderCacheStore.class,
+                        ProviderCache.class,
                         this.getStoreProps().getStore()
                 );
+        if (CollectionUtils.isEmpty(data)) {
 
-        return new ProviderOp.Batch(this.getStoreProps().getAddition().getTtl().toSeconds(), data.toArray(new ProviderCacheStore[0]));
+            return ProviderOperation.of(new ProviderCache[0]);
+        }
+
+        return ProviderOperation.of(data.toArray(new ProviderCache[0]));
     }
 
     @Override
@@ -120,10 +123,10 @@ public class MongoTemplateProvider extends CacheProvider {
 
     @Override
     public ProviderInfo getProviderInfo() {
-        ProviderCacheStore maxUpdatedDtm =
+        ProviderCache maxUpdatedDtm =
                 this.constr.mongoTemplate.findOne(
                         new Query().with(Sort.by(Sort.Order.desc("updatedDtm"))).limit(1),
-                        ProviderCacheStore.class,
+                        ProviderCache.class,
                         this.getStoreProps().getStore()
                 );
         ProviderInfo result = new ProviderInfo(this.getConsumerIdentifier());
