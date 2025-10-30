@@ -67,6 +67,9 @@ public abstract class CacheOperationConverter<T extends AbstractCacheOperation<?
         String data = objectMapper.writeValueAsString(store.getStore());
         store.setStore(objectMapper.writeValueAsBytes(data));
         Instant now = Instant.now();
+        if(Boolean.TRUE.equals(cacheProvider.getStoreProps().getAddition().getStatical())){
+
+        }
         if (jsonNode.hasNonNull("ttlSec")) {
             long ttlDiff = jsonNode.get("ttlSec").asLong() - cacheProvider.getStoreProps().getAddition().getTtl().getSeconds();
             store.setTtlEffectedDtm(now.plusSeconds(ttlDiff));
