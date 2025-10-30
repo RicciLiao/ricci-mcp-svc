@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import ricciliao.cache.pojo.ProviderCache;
 import ricciliao.cache.pojo.ProviderOperation;
-import ricciliao.x.component.response.data.ResponseData;
+import ricciliao.x.component.payload.PayloadData;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,7 +33,7 @@ public class ProviderOpSingleConverter extends CacheOperationConverter<ProviderO
 
     @Nonnull
     @Override
-    ResponseData writeInternal(@Nonnull Serializable data) throws IOException {
+    PayloadData writeInternal(@Nonnull Serializable data) throws IOException {
 
         return this.decode((ProviderCache) data);
     }

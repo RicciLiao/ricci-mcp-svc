@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ricciliao.cache.service.CacheService;
 import ricciliao.x.cache.annotation.ConsumerId;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
-import ricciliao.x.component.response.Response;
-import ricciliao.x.component.response.ResponseUtils;
-import ricciliao.x.component.response.data.ResponseData;
+import ricciliao.x.component.payload.PayloadData;
+import ricciliao.x.component.payload.response.Response;
+import ricciliao.x.component.payload.response.ResponseUtils;
+
 
 @Tag(name = "Cache Extra Operation Controller")
 @RestController
@@ -28,7 +29,7 @@ public class CacheExtraOperationController {
 
     @Operation(description = "Retrieve provider information for the consumer(with identifier).")
     @GetMapping("/providerInfo")
-    public Response<ResponseData> providerInfo(@ConsumerId ConsumerIdentifier identifier) {
+    public Response<PayloadData> providerInfo(@ConsumerId ConsumerIdentifier identifier) {
 
         return ResponseUtils.success(cacheService.providerInfo(identifier));
     }

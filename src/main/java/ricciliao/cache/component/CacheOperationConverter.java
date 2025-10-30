@@ -18,11 +18,11 @@ import ricciliao.x.cache.pojo.AbstractCacheOperation;
 import ricciliao.x.cache.pojo.ConsumerIdentifier;
 import ricciliao.x.cache.pojo.StoreCache;
 import ricciliao.x.component.exception.ParameterException;
-import ricciliao.x.component.response.Response;
-import ricciliao.x.component.response.ResponseHttpMessageConverter;
-import ricciliao.x.component.response.ResponseUtils;
-import ricciliao.x.component.response.code.impl.SecondaryCodeEnum;
-import ricciliao.x.component.response.data.ResponseData;
+import ricciliao.x.component.payload.PayloadData;
+import ricciliao.x.component.payload.response.Response;
+import ricciliao.x.component.payload.response.ResponseHttpMessageConverter;
+import ricciliao.x.component.payload.response.ResponseUtils;
+import ricciliao.x.component.payload.response.code.impl.SecondaryCodeEnum;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,9 +33,9 @@ import java.util.Objects;
 
 public abstract class CacheOperationConverter<T extends AbstractCacheOperation<? extends Serializable>> extends AbstractHttpMessageConverter<T> {
 
+    protected final ObjectMapper objectMapper;
     private final CacheProviderSelector cacheProviderSelector;
     private final ResponseHttpMessageConverter responseHttpMessageConverter;
-    protected final ObjectMapper objectMapper;
 
     protected CacheOperationConverter(ObjectMapper objectMapper, CacheProviderSelector cacheProviderSelector) {
         super(MediaType.APPLICATION_JSON);
@@ -67,7 +67,7 @@ public abstract class CacheOperationConverter<T extends AbstractCacheOperation<?
         String data = objectMapper.writeValueAsString(store.getStore());
         store.setStore(objectMapper.writeValueAsBytes(data));
         Instant now = Instant.now();
-        if(Boolean.TRUE.equals(cacheProvider.getStoreProps().getAddition().getStatical())){
+        if (Boolean.TRUE.equals(cacheProvider.getStoreProps().getAddition().getStatical())) {
 
         }
         if (jsonNode.hasNonNull("ttlSec")) {
@@ -106,7 +106,7 @@ public abstract class CacheOperationConverter<T extends AbstractCacheOperation<?
 
     @Override
     protected final void writeInternal(@Nonnull T t, @Nonnull HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        Response<ResponseData> result;
+        Response<PayloadData> result;
         if (Objects.isNull(t.getData())) {
             result = ResponseUtils.success();
         } else {
@@ -119,6 +119,6 @@ public abstract class CacheOperationConverter<T extends AbstractCacheOperation<?
     abstract T readInternal(@Nonnull JsonNode node, CacheProvider cacheProvider) throws HttpMessageNotReadableException, JsonProcessingException;
 
     @Nonnull
-    abstract ResponseData writeInternal(@Nonnull Serializable data) throws IOException;
+    abstract PayloadData writeInternal(@Nonnull Serializable data) throws IOException;
 
 }

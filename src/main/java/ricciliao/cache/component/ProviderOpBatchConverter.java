@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.annotation.Nonnull;
 import ricciliao.cache.pojo.ProviderCache;
 import ricciliao.cache.pojo.ProviderOperation;
-import ricciliao.x.component.response.data.ResponseData;
-import ricciliao.x.component.response.data.SimpleData;
+import ricciliao.x.component.payload.PayloadData;
+import ricciliao.x.component.payload.SimpleData;
 import ricciliao.x.component.sneaky.SneakyThrowUtils;
 
 import java.io.Serializable;
@@ -43,7 +43,7 @@ public class ProviderOpBatchConverter extends CacheOperationConverter<ProviderOp
 
     @Nonnull
     @Override
-    ResponseData writeInternal(@Nonnull Serializable data) {
+    PayloadData writeInternal(@Nonnull Serializable data) {
 
         return SimpleData.of(
                 Arrays.stream((ProviderCache[]) data)

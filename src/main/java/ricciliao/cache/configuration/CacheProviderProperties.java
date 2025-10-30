@@ -11,6 +11,9 @@ import ricciliao.x.starter.XProperties;
 public class CacheProviderProperties extends ApplicationProperties {
 
 
+    private final RedisCacheAutoProperties redisCacheProps;
+    private final MongoCacheAutoProperties mongoCacheProps;
+    private final XProperties xProps;
     public CacheProviderProperties(@Autowired(required = false) RedisCacheAutoProperties redisCacheProperties,
                                    @Autowired(required = false) MongoCacheAutoProperties mongoCacheProperties,
                                    @Autowired XProperties xProperties) {
@@ -19,10 +22,6 @@ public class CacheProviderProperties extends ApplicationProperties {
         this.mongoCacheProps = mongoCacheProperties;
         this.xProps = xProperties;
     }
-
-    private final RedisCacheAutoProperties redisCacheProps;
-    private final MongoCacheAutoProperties mongoCacheProps;
-    private final XProperties xProps;
 
     public RedisCacheAutoProperties getRedisCacheProps() {
         return redisCacheProps;

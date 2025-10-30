@@ -18,13 +18,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 )
 public class CacheProvApplication extends SpringBootServletInitializer {
 
+    public static void main(String[] args) {
+        SpringApplication.run(CacheProvApplication.class, args);
+    }
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(this.getClass());
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(CacheProvApplication.class, args);
     }
 
 }
