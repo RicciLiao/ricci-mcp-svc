@@ -28,13 +28,10 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public String create(ConsumerIdentifier identifier, ProviderOperation.Single single) {
         Instant now = Instant.now();
-        if (Boolean.TRUE.equals(providerSelector.isStatical(identifier))) {
-            single.getData().setCreatedDtm(now);
-            single.getData().setUpdatedDtm(single.getData().getCreatedDtm());
-        } else {
+        single.getData().setCreatedDtm(now);
+        single.getData().setUpdatedDtm(now);
+        if (!Boolean.TRUE.equals(providerSelector.isStatical(identifier))) {
             single.getData().setCacheKey(RandomGenerator.nextString(12).allAtLeast(3).generate());
-            single.getData().setCreatedDtm(now);
-            single.getData().setUpdatedDtm(now);
         }
         providerSelector.selectProvider(identifier).create(single);
 
@@ -97,7 +94,7 @@ public class CacheServiceImpl implements CacheService {
         if (Boolean.TRUE.equals(providerSelector.isStatical(identifier))) {
             for (ProviderCache cache : batch.getData()) {
                 cache.setCreatedDtm(now);
-                cache.setUpdatedDtm(cache.getCreatedDtm());
+                cache.setUpdatedDtm(now);
             }
         } else {
             for (ProviderCache cache : batch.getData()) {
