@@ -312,7 +312,7 @@ public abstract class CacheOperationConverter<T extends AbstractCacheOperation<?
 
             throw new ParameterException(SecondaryCodeEnum.BLANK);
         }
-        ConsumerIdentifier identifier = new ConsumerIdentifier(customer.getFirst(), store.getFirst());
+        StoreIdentifier identifier = new StoreIdentifier(customer.getFirst(), store.getFirst());
         if (!cacheProviderSelector.getCacheProviderMap().containsKey(identifier)) {
 
             throw new ParameterException(SecondaryCodeEnum.BLANK);
