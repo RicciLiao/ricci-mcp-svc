@@ -8,7 +8,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import ricciliao.x.cache.XCacheConstants;
 import ricciliao.x.cache.annotation.ConsumerId;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 
 public class ConsumerIdentifierResolver implements HandlerMethodArgumentResolver {
 
@@ -16,16 +16,16 @@ public class ConsumerIdentifierResolver implements HandlerMethodArgumentResolver
     public boolean supportsParameter(MethodParameter parameter) {
 
         return parameter.hasParameterAnnotation(ConsumerId.class)
-                && parameter.getParameterType().isAssignableFrom(ConsumerIdentifier.class);
+                && parameter.getParameterType().isAssignableFrom(StoreIdentifier.class);
     }
 
     @Override
-    public ConsumerIdentifier resolveArgument(@Nonnull MethodParameter parameter,
+    public StoreIdentifier resolveArgument(@Nonnull MethodParameter parameter,
                                               ModelAndViewContainer mavContainer,
                                               NativeWebRequest webRequest,
                                               WebDataBinderFactory binderFactory) {
 
-        return new ConsumerIdentifier(
+        return new StoreIdentifier(
                 webRequest.getHeader(XCacheConstants.HTTP_HEADER_FOR_CACHE_CUSTOMER),
                 webRequest.getHeader(XCacheConstants.HTTP_HEADER_FOR_CACHE_STORE)
         );

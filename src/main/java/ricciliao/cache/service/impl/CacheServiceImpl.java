@@ -7,8 +7,8 @@ import ricciliao.cache.component.CacheProviderSelector;
 import ricciliao.cache.pojo.ProviderCache;
 import ricciliao.cache.pojo.ProviderOperation;
 import ricciliao.cache.service.CacheService;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
 import ricciliao.x.cache.pojo.ProviderInfo;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 import ricciliao.x.cache.query.CacheBatchQuery;
 import ricciliao.x.component.random.RandomGenerator;
 
@@ -26,7 +26,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public String create(ConsumerIdentifier identifier, ProviderOperation.Single single) {
+    public String create(StoreIdentifier identifier, ProviderOperation.Single single) {
         Instant now = Instant.now();
         single.getData().setCreatedDtm(now);
         single.getData().setUpdatedDtm(now);
@@ -39,7 +39,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public boolean update(ConsumerIdentifier identifier, ProviderOperation.Single single) {
+    public boolean update(StoreIdentifier identifier, ProviderOperation.Single single) {
         ProviderOperation.Single existing = this.get(identifier, single.getData().getCacheKey());
         if (Objects.isNull(existing.getData())) {
 
@@ -54,7 +54,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public boolean delete(ConsumerIdentifier identifier, String id) {
+    public boolean delete(StoreIdentifier identifier, String id) {
         ProviderOperation.Single single = this.get(identifier, id);
         if (Objects.isNull(single.getData())) {
 
@@ -65,31 +65,31 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public ProviderOperation.Single get(ConsumerIdentifier identifier, String id) {
+    public ProviderOperation.Single get(StoreIdentifier identifier, String id) {
 
         return providerSelector.selectProvider(identifier).get(id);
     }
 
     @Override
-    public ProviderOperation.Batch list(ConsumerIdentifier identifier, CacheBatchQuery query) {
+    public ProviderOperation.Batch list(StoreIdentifier identifier, CacheBatchQuery query) {
 
         return providerSelector.selectProvider(identifier).list(query);
     }
 
     @Override
-    public boolean delete(ConsumerIdentifier identifier, CacheBatchQuery query) {
+    public boolean delete(StoreIdentifier identifier, CacheBatchQuery query) {
 
         return providerSelector.selectProvider(identifier).delete(query);
     }
 
     @Override
-    public ProviderInfo providerInfo(ConsumerIdentifier identifier) {
+    public ProviderInfo providerInfo(StoreIdentifier identifier) {
 
         return providerSelector.selectProvider(identifier).getProviderInfo();
     }
 
     @Override
-    public boolean create(ConsumerIdentifier identifier, ProviderOperation.Batch batch) {
+    public boolean create(StoreIdentifier identifier, ProviderOperation.Batch batch) {
         Instant now = Instant.now();
         if (Boolean.TRUE.equals(providerSelector.isStatical(identifier))) {
             for (ProviderCache cache : batch.getData()) {

@@ -7,9 +7,9 @@ import org.springframework.beans.factory.BeanCreationException;
 import ricciliao.cache.pojo.ProviderCache;
 import ricciliao.cache.pojo.ProviderOperation;
 import ricciliao.cache.properties.ProviderCacheProperties;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
 import ricciliao.x.cache.pojo.ProviderInfo;
 import ricciliao.x.cache.pojo.StoreCache;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 import ricciliao.x.cache.query.CacheBatchQuery;
 import ricciliao.x.cache.query.CacheQuery;
 
@@ -43,7 +43,7 @@ public abstract class CacheProvider {
         }
     }
 
-    public ConsumerIdentifier getConsumerIdentifier() {
+    public StoreIdentifier getConsumerIdentifier() {
         return this.constr.consumerIdentifier;
     }
 
@@ -87,14 +87,14 @@ public abstract class CacheProvider {
     public abstract ProviderInfo getProviderInfo();
 
     public abstract static class CacheProviderConstruct {
-        private ConsumerIdentifier consumerIdentifier;
+        private StoreIdentifier consumerIdentifier;
         private ProviderCacheProperties.StoreProperties storeProps;
 
-        public ConsumerIdentifier getConsumerIdentifier() {
+        public StoreIdentifier getConsumerIdentifier() {
             return consumerIdentifier;
         }
 
-        public void setConsumerIdentifier(ConsumerIdentifier consumerIdentifier) {
+        public void setConsumerIdentifier(StoreIdentifier consumerIdentifier) {
             this.consumerIdentifier = consumerIdentifier;
         }
 

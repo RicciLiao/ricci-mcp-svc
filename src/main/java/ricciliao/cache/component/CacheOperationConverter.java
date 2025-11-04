@@ -15,8 +15,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import ricciliao.cache.pojo.ProviderCache;
 import ricciliao.x.cache.XCacheConstants;
 import ricciliao.x.cache.pojo.AbstractCacheOperation;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
 import ricciliao.x.cache.pojo.StoreCache;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 import ricciliao.x.component.exception.ParameterException;
 import ricciliao.x.component.payload.PayloadData;
 import ricciliao.x.component.payload.response.Response;
@@ -52,7 +52,7 @@ public abstract class CacheOperationConverter<T extends AbstractCacheOperation<?
 
             throw new ParameterException(SecondaryCodeEnum.BLANK);
         }
-        ConsumerIdentifier identifier = new ConsumerIdentifier(customer.getFirst(), store.getFirst());
+        StoreIdentifier identifier = new StoreIdentifier(customer.getFirst(), store.getFirst());
         if (!cacheProviderSelector.getCacheProviderMap().containsKey(identifier)) {
 
             throw new ParameterException(SecondaryCodeEnum.BLANK);

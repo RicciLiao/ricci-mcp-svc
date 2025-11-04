@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import ricciliao.cache.component.CacheProviderSelector;
 import ricciliao.cache.component.MongoTemplateProvider;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 import ricciliao.x.starter.PropsAutoConfiguration;
 
 @PropsAutoConfiguration(
@@ -32,7 +32,7 @@ public class MongoCacheAutoConfiguration {
         for (MongoCacheAutoProperties.ConsumerProperties consumerProps : props.getConsumerList()) {
             for (MongoCacheAutoProperties.ConsumerProperties.StoreProperties storeProps : consumerProps.getStoreList()) {
                 this.createWrapper(
-                        new ConsumerIdentifier(consumerProps.getConsumer(), storeProps.getStore()),
+                        new StoreIdentifier(consumerProps.getConsumer(), storeProps.getStore()),
                         storeProps,
                         providerSelector
                 );
@@ -40,7 +40,7 @@ public class MongoCacheAutoConfiguration {
         }
     }
 
-    private void createWrapper(ConsumerIdentifier identifier,
+    private void createWrapper(StoreIdentifier identifier,
                                MongoCacheAutoProperties.ConsumerProperties.StoreProperties props,
                                CacheProviderSelector providerSelector) {
         MongoTemplateProvider.MongoTemplateProviderConstruct construct = new MongoTemplateProvider.MongoTemplateProviderConstruct();

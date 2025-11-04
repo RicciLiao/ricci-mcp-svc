@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ricciliao.cache.pojo.ProviderOperation;
 import ricciliao.cache.service.CacheService;
 import ricciliao.x.cache.annotation.ConsumerId;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 import ricciliao.x.cache.query.CacheBatchQuery;
 import ricciliao.x.component.payload.PayloadData;
 import ricciliao.x.component.payload.SimpleData;
@@ -35,7 +35,7 @@ public class CacheOperationController {
 
     @Operation(description = "Create a new record for the consumer(with identifier).")
     @PostMapping("")
-    public Response<PayloadData> create(@ConsumerId ConsumerIdentifier identifier,
+    public Response<PayloadData> create(@ConsumerId StoreIdentifier identifier,
                                         @RequestBody ProviderOperation.Single single) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.create(identifier, single)));
@@ -43,7 +43,7 @@ public class CacheOperationController {
 
     @Operation(description = "Update a existed record for the consumer(with identifier).")
     @PutMapping("")
-    public Response<PayloadData> update(@ConsumerId ConsumerIdentifier identifier,
+    public Response<PayloadData> update(@ConsumerId StoreIdentifier identifier,
                                         @RequestBody ProviderOperation.Single single) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.update(identifier, single)));
@@ -51,7 +51,7 @@ public class CacheOperationController {
 
     @Operation(description = "Delete a existed record for the consumer(with identifier).")
     @DeleteMapping("/{id}")
-    public Response<PayloadData> delete(@ConsumerId ConsumerIdentifier identifier,
+    public Response<PayloadData> delete(@ConsumerId StoreIdentifier identifier,
                                         @PathVariable String id) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.delete(identifier, id)));
@@ -59,7 +59,7 @@ public class CacheOperationController {
 
     @Operation(description = "Retrieve a existed record for the consumer(with identifier).")
     @GetMapping("/{id}")
-    public ProviderOperation.Single get(@ConsumerId ConsumerIdentifier identifier,
+    public ProviderOperation.Single get(@ConsumerId StoreIdentifier identifier,
                                         @PathVariable(name = "id") String id) {
 
         return cacheService.get(identifier, id);
@@ -67,7 +67,7 @@ public class CacheOperationController {
 
     @Operation(description = "Batch create new records for the consumer(with identifier).")
     @PostMapping("/batch")
-    public Response<PayloadData> create(@ConsumerId ConsumerIdentifier identifier,
+    public Response<PayloadData> create(@ConsumerId StoreIdentifier identifier,
                                         @RequestBody ProviderOperation.Batch batch) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.create(identifier, batch)));
@@ -75,7 +75,7 @@ public class CacheOperationController {
 
     @Operation(description = "Batch delete existed records for the consumer(with identifier).")
     @DeleteMapping("/batch")
-    public Response<PayloadData> delete(@ConsumerId ConsumerIdentifier identifier,
+    public Response<PayloadData> delete(@ConsumerId StoreIdentifier identifier,
                                         @RequestBody CacheBatchQuery query) {
 
         return ResponseUtils.success(SimpleData.of(cacheService.delete(identifier, query)));
@@ -83,7 +83,7 @@ public class CacheOperationController {
 
     @Operation(description = "Retrieve list of existed record for the consumer(with identifier).")
     @PostMapping("/list")
-    public ProviderOperation.Batch list(@ConsumerId ConsumerIdentifier identifier,
+    public ProviderOperation.Batch list(@ConsumerId StoreIdentifier identifier,
                                         @RequestBody CacheBatchQuery query) {
 
         return cacheService.list(identifier, query);

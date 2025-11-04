@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import ricciliao.x.cache.XCacheConstants;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 
 import java.util.Objects;
 
@@ -84,7 +84,7 @@ public class SpringdocConfiguration {
                             .removeIf(parameter ->
                                     Objects.nonNull(parameter.getSchema())
                                             && StringUtils.isNotBlank(parameter.getSchema().get$ref())
-                                            && parameter.getSchema().get$ref().contains(ConsumerIdentifier.class.getSimpleName()));
+                                            && parameter.getSchema().get$ref().contains(StoreIdentifier.class.getSimpleName()));
                 }
             }
         };

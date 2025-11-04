@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ricciliao.cache.service.CacheService;
 import ricciliao.x.cache.annotation.ConsumerId;
-import ricciliao.x.cache.pojo.ConsumerIdentifier;
+import ricciliao.x.cache.pojo.StoreIdentifier;
 import ricciliao.x.component.payload.PayloadData;
 import ricciliao.x.component.payload.response.Response;
 import ricciliao.x.component.payload.response.ResponseUtils;
@@ -29,7 +29,7 @@ public class CacheExtraOperationController {
 
     @Operation(description = "Retrieve provider information for the consumer(with identifier).")
     @GetMapping("/providerInfo")
-    public Response<PayloadData> providerInfo(@ConsumerId ConsumerIdentifier identifier) {
+    public Response<PayloadData> providerInfo(@ConsumerId StoreIdentifier identifier) {
 
         return ResponseUtils.success(cacheService.providerInfo(identifier));
     }
