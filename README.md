@@ -43,7 +43,6 @@ cache-provider:
             port:
             password:
             database:
-            store-class-name:
             addition:
               max-idle:
               max-total:
@@ -60,7 +59,6 @@ cache-provider:
             port:
             password:
             database:
-            store-class-name:
             addition:
               ttl:
           - store:
@@ -118,7 +116,6 @@ public abstract static class AdditionalProperties {
     * `port`: MongoDB or Redis port.
     * `password`: MongoDB or Redis password.
     * `database`: MongoDB scheme or Redis DB index.
-    * `storeClassName`: your data POJO class, it must extends `CacheDto.class`.
 * #### AdditionalProperties.class
 
     * `timeout`: connection pool timeout.
@@ -188,15 +185,21 @@ public class MongoCacheAutoProperties extends ApplicationProperties {
 
 ### 📝 Coding
 
-#### 📀 Provider
+#### 🐾 Common
 
-* #### CacheOperation.class
+*Please refer to `x-cache-components`*
+
+* #### AbstractCacheOperation.class
 
 ```java
-public class CacheOperation<T extends Serializable> implements ResponseData {
-    private Long ttlOfSeconds;
-    @CacheData
+public abstract class AbstractCacheOperation<T extends Serializable> implements Serializable {
     private T data;
+
+    public static class Single<T extends StoreCache<? extends Serializable>> extends AbstractCacheOperation<T> {
+    }
+
+    public static class Batch<T extends StoreCache<? extends Serializable>> extends AbstractCacheOperation<T[]> {
+    }
 }
 ```
 
@@ -204,21 +207,20 @@ Cache operation payload for CURD.
 
 ---
 
-* #### CacheStore.class
+* #### StoreCache.class
 
 ```java
-public class CacheStore<T extends Serializable> implements Serializable {
+public class StoreCache<T extends Serializable> implements PayloadData {
     @CacheQuery.Support(CacheQuery.Property.CACHE_KEY)
     @CacheId
     private String cacheKey;
     @CacheQuery.Support(CacheQuery.Property.CREATED_DTM)
-    private LocalDateTime createdDtm;
+    private Instant createdDtm;
     @CacheQuery.Support(CacheQuery.Property.UPDATED_DTM)
-    private LocalDateTime updatedDtm;
-    @JsonIgnore
-    private LocalDateTime effectedDtm;
-    @CacheData
-    private T data;
+    private Instant updatedDtm;
+    private Instant ttlEffectedDtm;
+    @Store
+    private T store;
 }
 ```
 
@@ -226,39 +228,24 @@ Definition of data structure which stored in **Cache Provider**.
 
 ---
 
-* #### ProviderCacheStore.class
+* #### StoreIdentifier.class
 
 ```java
-public class ProviderCacheStore extends CacheStore<byte[]> {
+public class StoreIdentifier implements PayloadData {
+    private String consumer;
+    private String store;
+
 }
 ```
 
-Definition of provider data structure which stored in **Cache Provider**.
+The identification of cache data, please refer `📝Configuration`.
 
 ---
 
-* #### ProviderOp.class
+* #### ProviderInfo.class
 
 ```java
-public class ProviderOp<T extends Serializable> extends CacheOperation<T> {
-
-    public static class Single extends ProviderOp<ProviderCacheStore> {
-    }
-
-    public static class Batch extends ProviderOp<ProviderCacheStore[]> {
-    }
-}
-```
-
-Definition of provider operation payload, you can use this to manipulate one or more data.
-
----
-
-* #### ProviderInfoDto.class
-
-```java
-public class ProviderInfoDto {
-
+public class ProviderInfo {
     private Long count;
     private LocalDateTime createdDtm;
     private LocalDateTime maxUpdatedDtm;
@@ -270,53 +257,126 @@ You can retrieve a provider information from this POJO.
 
 ---
 
+#### 📀 Provider
+
+* #### ProviderCache.class
+
+```java
+public class ProviderCache extends StoreCache<byte[]> {
+}
+```
+
+Definition of provider data structure which stored in **Cache Provider**.
+
+---
+
+* #### ProviderOperation.class
+
+```java
+public interface ProviderOperation {
+
+    class Single extends AbstractCacheOperation.Single<ProviderCache> {
+    }
+
+    class Batch extends AbstractCacheOperation.Batch<ProviderCache> {
+    }
+
+}
+```
+
+Definition of provider operation payload, you can use this to manipulate single or batch data(s).
+
+---
+
 * #### CacheOperationConverter.class
 
 ```java
-public abstract class CacheOperationConverter<T extends ProviderOp<? extends Serializable>> extends AbstractHttpMessageConverter<T> {
+public abstract class CacheOperationConverter<T extends AbstractCacheOperation<? extends Serializable>> extends AbstractHttpMessageConverter<T> {
 
     protected final ObjectMapper objectMapper;
-    protected final CacheProviderSelector cacheProvider;
+    private final CacheProviderSelector cacheProviderSelector;
+    private final ResponseHttpMessageConverter responseHttpMessageConverter;
 
-    public CacheOperationConverter(ObjectMapper objectMapper, CacheProviderSelector cacheProvider) {
+    protected CacheOperationConverter(ObjectMapper objectMapper, CacheProviderSelector cacheProviderSelector) {
         super(MediaType.APPLICATION_JSON);
         this.objectMapper = objectMapper;
-        this.cacheProvider = cacheProvider;
+        this.cacheProviderSelector = cacheProviderSelector;
+        this.responseHttpMessageConverter = new ResponseHttpMessageConverter(objectMapper);
     }
 
-    protected ConsumerIdentifier verify(HttpInputMessage inputMessage) throws CmnParameterException {
+    protected CacheProvider verify(HttpInputMessage inputMessage) throws ParameterException {
         List<String> customer = inputMessage.getHeaders().get(XCacheConstants.HTTP_HEADER_FOR_CACHE_CUSTOMER);
         List<String> store = inputMessage.getHeaders().get(XCacheConstants.HTTP_HEADER_FOR_CACHE_STORE);
         if (CollectionUtils.isEmpty(customer) || customer.size() > 1
                 || CollectionUtils.isEmpty(store) || store.size() > 1) {
 
-            throw new CmnParameterException();
+            throw new ParameterException(SecondaryCodeEnum.BLANK);
         }
         ConsumerIdentifier identifier = new ConsumerIdentifier(customer.getFirst(), store.getFirst());
-        if (!cacheProvider.getCacheProviderMap().containsKey(identifier)) {
+        if (!cacheProviderSelector.getCacheProviderMap().containsKey(identifier)) {
 
-            throw new CmnParameterException();
+            throw new ParameterException(SecondaryCodeEnum.BLANK);
         }
 
-        return identifier;
+        return cacheProviderSelector.getCacheProviderMap().get(identifier);
+    }
+
+    protected ProviderCache encode(JsonNode jsonNode, CacheProvider cacheProvider) throws JsonProcessingException {
+        StoreCache<Serializable> store = objectMapper.convertValue(jsonNode, new TypeReference<>() {
+        });
+        String data = objectMapper.writeValueAsString(store.getStore());
+        store.setStore(objectMapper.writeValueAsBytes(data));
+        Instant now = Instant.now();
+        if (jsonNode.hasNonNull("ttlSec")) {
+            long ttlDiff = jsonNode.get("ttlSec").asLong() - cacheProvider.getStoreProps().getAddition().getTtl().getSeconds();
+            store.setTtlEffectedDtm(now.plusSeconds(ttlDiff));
+        } else {
+            store.setTtlEffectedDtm(now);
+        }
+
+        return objectMapper.convertValue(store, new TypeReference<>() {
+        });
+    }
+
+    protected StoreCache<Serializable> decode(ProviderCache cache) throws IOException {
+        StoreCache<Serializable> result = objectMapper.convertValue(cache, new TypeReference<>() {
+        });
+        String data = objectMapper.readValue(cache.getStore(), String.class);
+        result.setStore(objectMapper.readValue(data, new TypeReference<LinkedHashMap<String, Serializable>>() {
+        }));
+
+        return result;
     }
 
     @Nonnull
     @Override
-    protected T readInternal(@Nonnull Class<? extends T> clazz, @Nonnull HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
-
+    protected final T readInternal(@Nonnull Class<? extends T> clazz, @Nonnull HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
         try {
-            this.verify(inputMessage);
+            JsonNode jsonNode = objectMapper.readTree(inputMessage.getBody());
 
-            return this.readInternal(inputMessage);
+            return this.readInternal(jsonNode.get("data"), this.verify(inputMessage));
         } catch (Exception e) {
 
             throw new HttpMessageNotReadableException(e.getMessage(), inputMessage);
         }
     }
 
+    @Override
+    protected final void writeInternal(@Nonnull T t, @Nonnull HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        Response<PayloadData> result;
+        if (Objects.isNull(t.getData())) {
+            result = ResponseUtils.success();
+        } else {
+            result = ResponseUtils.success(this.writeInternal(t.getData()));
+        }
+        responseHttpMessageConverter.write(result, null, this.getSupportedMediaTypes().getFirst(), outputMessage);
+    }
+
     @Nonnull
-    abstract T readInternal(@Nonnull HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException;
+    abstract T readInternal(@Nonnull JsonNode node, CacheProvider cacheProvider) throws HttpMessageNotReadableException, JsonProcessingException;
+
+    @Nonnull
+    abstract PayloadData writeInternal(@Nonnull Serializable data) throws IOException;
 
 }
 ```
@@ -326,7 +386,7 @@ public abstract class CacheOperationConverter<T extends ProviderOp<? extends Ser
 * #### ProviderOpSingleConverter.class
 
 ```java
-public class ProviderOpSingleConverter extends CacheOperationConverter<ProviderOp.Single> {
+public class ProviderOpSingleConverter extends CacheOperationConverter<ProviderOperation.Single> {
 
     public ProviderOpSingleConverter(ObjectMapper objectMapper,
                                      CacheProviderSelector cacheProvider) {
@@ -336,32 +396,23 @@ public class ProviderOpSingleConverter extends CacheOperationConverter<ProviderO
     @Override
     protected boolean supports(@Nonnull Class<?> clazz) {
 
-        return ProviderOp.Single.class.isAssignableFrom(clazz);
+        return ProviderOperation.Single.class.isAssignableFrom(clazz);
     }
 
     @Nonnull
     @Override
-    ProviderOp.Single readInternal(@Nonnull HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-        JsonNode jsonNode = objectMapper.readTree(inputMessage.getBody());
-        CacheOperation<CacheStore<Serializable>> op = objectMapper.convertValue(jsonNode, new TypeReference<>() {
-        });
-        String data = objectMapper.writeValueAsString(op.getData().getData());
-        op.getData().setData(objectMapper.writeValueAsBytes(data));
+    ProviderOperation.Single readInternal(@Nonnull JsonNode node, CacheProvider cacheProvider) throws JsonProcessingException {
 
-        return objectMapper.convertValue(op, new TypeReference<>() {
-        });
+        return ProviderOperation.of(this.encode(node, cacheProvider));
     }
 
+    @Nonnull
     @Override
-    protected void writeInternal(@Nonnull ProviderOp.Single single, @Nonnull HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        String data = objectMapper.readValue(single.getData().getData(), String.class);
-        CacheOperation<CacheStore<Serializable>> op = objectMapper.convertValue(single, new TypeReference<>() {
-        });
-        op.getData().setData((Serializable) objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
-        }));
+    PayloadData writeInternal(@Nonnull Serializable data) throws IOException {
 
-        objectMapper.writeValue(outputMessage.getBody(), ResponseUtils.successResponse(op));
+        return this.decode((ProviderCache) data);
     }
+
 }
 ```
 
@@ -370,57 +421,42 @@ public class ProviderOpSingleConverter extends CacheOperationConverter<ProviderO
 * #### ProviderOpBatchConverter.class
 
 ```java
-public class ProviderOpBatchConverter extends CacheOperationConverter<ProviderOp.Batch> {
+public class ProviderOpBatchConverter extends CacheOperationConverter<ProviderOperation.Batch> {
 
     public ProviderOpBatchConverter(ObjectMapper objectMapper,
-                                    CacheProviderSelector cacheProvider) {
-        super(objectMapper, cacheProvider);
+                                    CacheProviderSelector cacheProviderSelector) {
+        super(objectMapper, cacheProviderSelector);
     }
 
     @Override
     protected boolean supports(@Nonnull Class<?> clazz) {
 
-        return ProviderOp.Batch.class.isAssignableFrom(clazz);
+        return ProviderOperation.Batch.class.isAssignableFrom(clazz);
     }
 
     @Nonnull
     @Override
-    protected ProviderOp.Batch readInternal(@Nonnull HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-        JsonNode jsonNode = objectMapper.readTree(inputMessage.getBody());
-        CacheOperation<CacheStore<?>[]> op = objectMapper.convertValue(jsonNode, new TypeReference<>() {
-        });
-        ProviderCacheStore[] stores =
-                Arrays.stream(op.getData()).map(store -> {
-                            ProviderCacheStore providerCacheStore = new ProviderCacheStore();
-                            providerCacheStore.setCacheKey(store.getCacheKey());
-                            providerCacheStore.setCreatedDtm(store.getCreatedDtm());
-                            providerCacheStore.setUpdatedDtm(store.getUpdatedDtm());
-                            providerCacheStore.setEffectedDtm(store.getEffectedDtm());
-                            String data = SneakyThrowUtils.get(() -> objectMapper.writeValueAsString(store.getData()));
-                            providerCacheStore.setData(SneakyThrowUtils.get(() -> objectMapper.writeValueAsBytes(data)));
-
-                            return providerCacheStore;
-                        })
-                        .toArray(ProviderCacheStore[]::new);
-        op.setData(stores);
-
-        return objectMapper.convertValue(op, new TypeReference<>() {
-        });
-    }
-
-    @Override
-    protected void writeInternal(@Nonnull ProviderOp.Batch batch, @Nonnull HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        CacheOperation<CacheStore<Serializable>[]> op = objectMapper.convertValue(batch, new TypeReference<>() {
-        });
-        for (CacheStore<Serializable> datum : op.getData()) {
-            String data = objectMapper.readValue((byte[]) datum.getData(), String.class);
-            datum.setData((Serializable) objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
-            }));
+    ProviderOperation.Batch readInternal(@Nonnull JsonNode node, CacheProvider cacheProvider) throws JsonProcessingException {
+        ArrayNode arrayNode = (ArrayNode) node;
+        ProviderCache[] stores = new ProviderCache[arrayNode.size()];
+        for (int i = 0; i < arrayNode.size(); i++) {
+            stores[i] = objectMapper.convertValue(this.encode(arrayNode.get(i), cacheProvider), new TypeReference<>() {
+            });
         }
 
-
-        objectMapper.writeValue(outputMessage.getBody(), ResponseUtils.successResponse(op));
+        return ProviderOperation.of(stores);
     }
+
+    @Nonnull
+    @Override
+    PayloadData writeInternal(@Nonnull Serializable data) {
+
+        return SimpleData.of(
+                Arrays.stream((ProviderCache[]) data)
+                        .map(store -> SneakyThrowUtils.get(() -> this.decode(store))).toList()
+        );
+    }
+
 }
 ```
 
@@ -428,11 +464,13 @@ public class ProviderOpBatchConverter extends CacheOperationConverter<ProviderOp
 
 #### 💿 Consumer
 
-* #### ConsumerCacheData.class
+* #### ConsumerStore.class
 
 ```java
-public interface ConsumerCacheData extends ResponseData {
+public interface ConsumerStore extends PayloadData {
+
     String generateCacheKey();
+
 }
 ```
 
@@ -440,10 +478,11 @@ Interface of cache data, if you want to cache your data in **Cache Provider**, p
 
 ---
 
-* #### ConsumerCacheStore.class
+* #### ConsumerCache.class
 
 ```java
-public class ConsumerCacheStore<T extends ConsumerCacheData> extends CacheStore<T> implements Serializable {
+public class ConsumerCache<T extends ConsumerStore> extends StoreCache<T> implements Serializable {
+    private Long ttlSec;
 }
 ```
 
@@ -451,32 +490,21 @@ Definition of consumer data structure.
 
 ---
 
-* #### ConsumerOp.class
+* #### ConsumerOperation.class
 
 ```java
-public class ConsumerOp<T extends Serializable> extends CacheOperation<T> {
-    public static class Single<T extends ConsumerCacheData> extends ConsumerOp<ConsumerCacheStore<T>> {
+public interface ConsumerOperation {
+
+    class Single<T extends ConsumerStore> extends AbstractCacheOperation.Single<ConsumerCache<T>> {
     }
 
-    public static class Batch<T extends ConsumerCacheData> extends ConsumerOp<ConsumerCacheStore<T>[]> {
+    class Batch<T extends ConsumerStore> extends AbstractCacheOperation.Batch<ConsumerCache<T>> {
     }
+
 }
 ```
 
-Definition of consumer operation payload, you can use this to manipulate one or more data.
-
----
-
-* #### ConsumerIdentifierDto.class
-
-```java
-public class ConsumerIdentifierDto {
-    private String consumer;
-    private String store;
-}
-```
-
-The identification of user data, please refer `📝Configuration`.
+Definition of consumer operation payload, you can use this to manipulate single or batch data(s).
 
 ---
 
