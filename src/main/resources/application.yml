@@ -40,7 +40,13 @@ cache-provider:
             password: ${MONGODB_PASSWORD}
             database: bsm
             addition:
-              ttl: 120s
+              statical: true
+          - store: signInLog
+            host: ${MONGODB_HOST}
+            port: ${MONGODB_PORT}
+            password: ${MONGODB_PASSWORD}
+            database: bsm
+            addition:
               statical: true
 ricciliao:
   x:
