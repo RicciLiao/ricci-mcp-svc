@@ -1,59 +1,46 @@
 spring:
   application:
-    version: @project.version@
-    name: cache-provider
+    name: mpc
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_URL}/mcp
+    username: ${DATABASE_USER_NAME}
+    password: ${DATABASE_USER_PASSWORD}
+    hikari:
+      max-lifetime: 30000
+      maximum-pool-size: 20
+      minimum-idle: 2
+      idle-timeout: 10000
+      connection-timeout: 15000
+      register-mbeans: true
+      connection-test-query: select 1 from dual
+      leak-detection-threshold: 30000
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
-cache-provider:
+mcp:
   redis:
-    consumer-list:
-      - consumer: message
-        store-list:
-          - store: code
-            host: ${REDIS_HOST}
-            port: ${REDIS_PORT}
-            password: ${REDIS_PASSWORD}
-            database: 1
-            addition:
-              max-idle: 20
-              max-total: 40
-              min-idle: 10
-              timeout: 60s
-              ttl: -1s
-              statical: true
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    username: admin
+    password: ${REDIS_PASSWORD}
   mongo:
-    consumer-list:
-      - consumer: bsm
-        store-list:
-          - store: challenge
-            host: ${MONGODB_HOST}
-            port: ${MONGODB_PORT}
-            password: ${MONGODB_PASSWORD}
-            database: bsm
-            addition:
-              ttl: 120s
-          - store: signUpLock
-            host: ${MONGODB_HOST}
-            port: ${MONGODB_PORT}
-            password: ${MONGODB_PASSWORD}
-            database: bsm
-            addition:
-              statical: true
-          - store: signInLog
-            host: ${MONGODB_HOST}
-            port: ${MONGODB_PORT}
-            password: ${MONGODB_PASSWORD}
-            database: bsm
-            addition:
-              statical: true
+    jks:
+      path:
+      password:
+    host: ${MONGODB_HOST}
+    port: ${MONGODB_PORT}
+    username: admin
+    password: ${MONGODB_PASSWORD}
+    authentication-database: admin
 ricciliao:
   x:
     common:
-      time-zone: GMT+8
-      consumer: cache-provider
-      version: ${project.version}
+      consumer: mcp
     log:
       executor:
         enable: false
+logging:
+  level:
+    com:
+      mongodb: DEBUG
