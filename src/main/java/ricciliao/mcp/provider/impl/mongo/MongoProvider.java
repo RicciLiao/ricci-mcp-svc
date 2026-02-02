@@ -138,7 +138,8 @@ public class MongoProvider extends AbstractMcpProvider {
 
     private int convert2Limit(McpQuery query) {
 
-        return Objects.nonNull(query.getLimit()) ? query.getLimit().intValue() : McpConstants.DEFAULT_CACHE_OP_BATCH_LIMIT;
+        return Objects.nonNull(query.getLimit()) && query.getLimit() != 0L ?
+                query.getLimit().intValue() : McpConstants.DEFAULT_CACHE_OP_BATCH_LIMIT;
     }
 
     private Bson convert2Filter(McpQuery query) {

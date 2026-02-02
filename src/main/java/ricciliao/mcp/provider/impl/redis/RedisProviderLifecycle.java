@@ -15,14 +15,12 @@ import ricciliao.x.mcp.query.McpCriteria;
 
 public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
 
-    private final JedisPool authJedisPool;
     private final JedisPooled authJedisPooled;
 
     public RedisProviderLifecycle(@NonNull McpProviderRegistry registry,
                                   @Nonnull JedisPool authJedisPool,
                                   @Nonnull JedisPooled authJedisPooled) {
         super(registry);
-        this.authJedisPool = authJedisPool;
         this.authJedisPooled = authJedisPooled;
     }
 
@@ -54,7 +52,7 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
                             .defaultOptions()
                             .setDefinition(
                                     new IndexDefinition(IndexDefinition.Type.JSON)
-                                            .setPrefixes(provider.getIdentifier().toString())),
+                                            .setPrefixes(provider.getIdentifier().toString().replace("_", ":"))),
                     Schema.from(id, createdDtm, updatedDtm)
             );
         }
