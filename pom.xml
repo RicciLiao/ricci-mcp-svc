@@ -135,6 +135,22 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.mybatis.maven</groupId>
+                <artifactId>migrations-maven-plugin</artifactId>
+                <configuration>
+                    <repository>mybatis/db/migration</repository>
+                    <idPattern>00000000000</idPattern>
+                    <skip>false</skip>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mysql</groupId>
+                        <artifactId>mysql-connector-j</artifactId>
+                        <version>${mysql.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
         <finalName>ROOT</finalName>
     </build>
