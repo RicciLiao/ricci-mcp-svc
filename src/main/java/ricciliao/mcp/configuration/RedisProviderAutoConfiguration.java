@@ -45,10 +45,9 @@ public class RedisProviderAutoConfiguration {
 
     @Bean
     public RedisProviderLifecycle redisProviderLifecycle(@Autowired McpProviderRegistry mcpProviderRegistry,
-                                                         @Autowired JedisPool authJedisPool,
                                                          @Autowired JedisPooled authJedisPooled) {
 
-        return new RedisProviderLifecycle(mcpProviderRegistry, authJedisPool, authJedisPooled);
+        return new RedisProviderLifecycle(mcpProviderRegistry, authJedisPooled);
     }
 
     @Bean

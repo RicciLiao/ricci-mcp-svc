@@ -3,27 +3,23 @@ package ricciliao.mcp.pojo.po;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
-import ricciliao.x.component.persistence.LoggerPo;
+import jakarta.persistence.Version;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
-@Table(name = "mcp_provider_passkey_log", schema = "mcp")
-@IdClass(McpProviderPasskeyLogId.class)
-public class McpProviderPasskeyLogPo implements LoggerPo {
+@Table(name = "mcp_provider_pass_info", schema = "mcp")
+public class McpProviderPassInfoPo implements Serializable {
     @Serial
-    private static final long serialVersionUID = 439705861210066946L;
+    private static final long serialVersionUID = -8197076321090607199L;
 
     @Id
     @Column(name = "provider_info_id", nullable = false)
     private Long providerInfoId;
-
-    @Id
-    @Column(name = "action_dtm", nullable = false)
-    private Instant actionDtm;
 
     @Column(name = "pass_key", nullable = false, length = 16)
     private String passKey;
@@ -34,28 +30,16 @@ public class McpProviderPasskeyLogPo implements LoggerPo {
     @Column(name = "updated_dtm", nullable = false)
     private Instant updatedDtm;
 
+    @Version
     @Column(name = "version", nullable = false)
     private Instant version;
-
-    @Column(name = "action_cd", nullable = false, length = 1)
-    private Character actionCd;
 
     public Long getProviderInfoId() {
         return providerInfoId;
     }
 
-    public void setProviderInfoId(Long providerInfoId) {
-        this.providerInfoId = providerInfoId;
-    }
-
-    @Override
-    public Instant getActionDtm() {
-        return actionDtm;
-    }
-
-    @Override
-    public void setActionDtm(Instant actionDtm) {
-        this.actionDtm = actionDtm;
+    public void setProviderInfoId(Long id) {
+        this.providerInfoId = id;
     }
 
     public String getPassKey() {
@@ -91,13 +75,13 @@ public class McpProviderPasskeyLogPo implements LoggerPo {
     }
 
     @Override
-    public Character getActionCd() {
-        return actionCd;
+    public boolean equals(Object o) {
+        if (!(o instanceof McpProviderPassInfoPo that)) return false;
+        return Objects.equals(getProviderInfoId(), that.getProviderInfoId()) && Objects.equals(getPassKey(), that.getPassKey()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion());
     }
 
     @Override
-    public void setActionCd(Character actionCd) {
-        this.actionCd = actionCd;
+    public int hashCode() {
+        return Objects.hash(getProviderInfoId(), getPassKey(), getCreatedDtm(), getUpdatedDtm(), getVersion());
     }
-
 }

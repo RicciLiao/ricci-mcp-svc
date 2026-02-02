@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class McpProviderInfoLogPoId implements Serializable {
     @Serial
-    private static final long serialVersionUID = -503283456076092163L;
+    private static final long serialVersionUID = 918561131645154420L;
 
     private Long id;
     private Instant actionDtm;

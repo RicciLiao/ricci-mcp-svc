@@ -2,7 +2,6 @@ package ricciliao.mcp.provider.impl.redis;
 
 import jakarta.annotation.Nonnull;
 import org.springframework.lang.NonNull;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.search.IndexDefinition;
 import redis.clients.jedis.search.IndexOptions;
@@ -18,7 +17,6 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
     private final JedisPooled authJedisPooled;
 
     public RedisProviderLifecycle(@NonNull McpProviderRegistry registry,
-                                  @Nonnull JedisPool authJedisPool,
                                   @Nonnull JedisPooled authJedisPooled) {
         super(registry);
         this.authJedisPooled = authJedisPooled;

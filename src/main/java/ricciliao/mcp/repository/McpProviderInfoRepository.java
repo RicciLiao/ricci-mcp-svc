@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface McpProviderInfoPoRepository extends JpaRepository<McpProviderInfoPo, Long> {
+public interface McpProviderInfoRepository extends JpaRepository<McpProviderInfoPo, Long> {
     @Override
     void deleteAllByIdInBatch(Iterable<Long> longs);
 
@@ -100,7 +100,7 @@ public interface McpProviderInfoPoRepository extends JpaRepository<McpProviderIn
 
     @Query("select new McpProviderInfoPo(po, passkey) " +
             "from McpProviderInfoPo po " +
-            "left join McpProviderPasskeyPo passkey on passkey.providerInfoId = po.id " +
+            "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id " +
             "where po.isActive = true ")
     List<McpProviderInfoPo> initialize();
 }

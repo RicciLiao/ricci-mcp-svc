@@ -2,8 +2,8 @@ package ricciliao.mcp.utils;
 
 import ricciliao.mcp.pojo.po.McpProviderInfoLogPo;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
-import ricciliao.mcp.pojo.po.McpProviderPasskeyLogPo;
-import ricciliao.mcp.pojo.po.McpProviderPasskeyPo;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoLogPo;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.x.component.persistence.LoggerAction;
 
 public class McpPojoUtils {
@@ -24,13 +24,14 @@ public class McpPojoUtils {
         logPo.setIsStatic(po.getIsStatic());
         logPo.setCreatedDtm(po.getCreatedDtm());
         logPo.setUpdatedDtm(po.getUpdatedDtm());
+        logPo.setVersion(po.getVersion());
 
         return actionCd.apply(logPo);
     }
 
-    public static LoggerAction.Dtm<McpProviderPasskeyLogPo> convert2Po(McpProviderPasskeyPo po,
-                                                                       LoggerAction.Cd<McpProviderPasskeyLogPo> actionCd) {
-        McpProviderPasskeyLogPo logPo = new McpProviderPasskeyLogPo();
+    public static LoggerAction.Dtm<McpProviderPassInfoLogPo> convert2Po(McpProviderPassInfoPo po,
+                                                                        LoggerAction.Cd<McpProviderPassInfoLogPo> actionCd) {
+        McpProviderPassInfoLogPo logPo = new McpProviderPassInfoLogPo();
         logPo.setProviderInfoId(po.getProviderInfoId());
         logPo.setPassKey(po.getPassKey());
         logPo.setCreatedDtm(po.getCreatedDtm());

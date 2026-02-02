@@ -9,13 +9,14 @@ import ricciliao.x.component.persistence.LoggerPo;
 
 import java.io.Serial;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "mcp_provider_info_log", schema = "mcp")
 @IdClass(McpProviderInfoLogPoId.class)
 public class McpProviderInfoLogPo implements LoggerPo {
     @Serial
-    private static final long serialVersionUID = -6948097405911012909L;
+    private static final long serialVersionUID = 4911198406548894776L;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -48,6 +49,9 @@ public class McpProviderInfoLogPo implements LoggerPo {
 
     @Column(name = "updated_dtm", nullable = false)
     private Instant updatedDtm;
+
+    @Column(name = "version", nullable = false)
+    private Instant version;
 
     @Column(name = "action_cd", nullable = false, length = 1)
     private Character actionCd;
@@ -134,6 +138,14 @@ public class McpProviderInfoLogPo implements LoggerPo {
         this.updatedDtm = updatedDtm;
     }
 
+    public Instant getVersion() {
+        return version;
+    }
+
+    public void setVersion(Instant version) {
+        this.version = version;
+    }
+
     @Override
     public Character getActionCd() {
         return actionCd;
@@ -144,4 +156,14 @@ public class McpProviderInfoLogPo implements LoggerPo {
         this.actionCd = actionCd;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof McpProviderInfoLogPo logPo)) return false;
+        return Objects.equals(getId(), logPo.getId()) && Objects.equals(getActionDtm(), logPo.getActionDtm()) && Objects.equals(getConsumer(), logPo.getConsumer()) && Objects.equals(getStore(), logPo.getStore()) && Objects.equals(getProvider(), logPo.getProvider()) && Objects.equals(getTtlSeconds(), logPo.getTtlSeconds()) && Objects.equals(getIsActive(), logPo.getIsActive()) && Objects.equals(getIsStatic(), logPo.getIsStatic()) && Objects.equals(getCreatedDtm(), logPo.getCreatedDtm()) && Objects.equals(getUpdatedDtm(), logPo.getUpdatedDtm()) && Objects.equals(getVersion(), logPo.getVersion()) && Objects.equals(getActionCd(), logPo.getActionCd());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getActionDtm(), getConsumer(), getStore(), getProvider(), getTtlSeconds(), getIsActive(), getIsStatic(), getCreatedDtm(), getUpdatedDtm(), getVersion(), getActionCd());
+    }
 }

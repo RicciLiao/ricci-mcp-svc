@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface McpProviderInfoLogPoRepository extends JpaRepository<McpProviderInfoLogPo, McpProviderInfoLogPoId> {
+public interface McpProviderInfoLogRepository extends JpaRepository<McpProviderInfoLogPo, McpProviderInfoLogPoId> {
     @Override
     void deleteAllByIdInBatch(Iterable<McpProviderInfoLogPoId> mcpProviderInfoLogPoIds);
 

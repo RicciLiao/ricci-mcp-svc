@@ -49,7 +49,7 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
                     .runCommand(
                             BsonDocument.parse(String.format(
                                     "{createUser: \"%s\", pwd: \"%s\", roles: [{role: \"readWrite\", db: \"%s\"}]}",
-                                    po.getConsumer(), po.getPasskey().getPassKey(), po.getConsumer()
+                                    po.getConsumer(), po.getPassInfo().getPassKey(), po.getConsumer()
                             ))
                     );
         }

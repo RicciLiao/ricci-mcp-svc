@@ -20,7 +20,7 @@ public class MongoProviderFactory extends AbstractMcpProviderFactory {
         MongoProviderProperties providerProperties = this.getProviderProperties();
         providerProperties.setUsername(po.getConsumer());
         providerProperties.setDatabase(po.getConsumer());
-        providerProperties.setPassword(po.getPasskey().getPassKey().toCharArray());
+        providerProperties.setPassword(po.getPassInfo().getPassKey().toCharArray());
 
         return new MongoProvider(po, (MongoClient) super.getClientFactory().create(providerProperties));
     }

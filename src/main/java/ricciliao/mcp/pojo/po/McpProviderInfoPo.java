@@ -10,29 +10,29 @@ import jakarta.persistence.Version;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "mcp_provider_info", schema = "mcp")
 public class McpProviderInfoPo implements Serializable {
     @Serial
-    private static final long serialVersionUID = -453261020434382545L;
+    private static final long serialVersionUID = -2014559219143099725L;
 
     public McpProviderInfoPo() {
     }
 
-    public McpProviderInfoPo(McpProviderInfoPo po, McpProviderPasskeyPo passkey) {
-        this.passkey = po.getPasskey();
-        this.id = po.getId();
-        this.consumer = po.getConsumer();
-        this.store = po.getStore();
-        this.provider = po.getProvider();
-        this.ttlSeconds = po.getTtlSeconds();
-        this.isActive = po.getIsActive();
-        this.isStatic = po.getIsStatic();
-        this.createdDtm = po.getCreatedDtm();
-        this.updatedDtm = po.getUpdatedDtm();
-        this.version = po.getVersion();
-        this.passkey = passkey;
+    public McpProviderInfoPo(McpProviderInfoPo po,
+                             McpProviderPassInfoPo passInfo) {
+        this.id = po.id;
+        this.consumer = po.consumer;
+        this.provider = po.provider;
+        this.ttlSeconds = po.ttlSeconds;
+        this.isActive = po.isActive;
+        this.isStatic = po.isStatic;
+        this.createdDtm = po.createdDtm;
+        this.updatedDtm = po.updatedDtm;
+        this.version = po.version;
+        this.passInfo = passInfo;
     }
 
     @Id
@@ -68,15 +68,7 @@ public class McpProviderInfoPo implements Serializable {
     private Instant version;
 
     @Transient
-    private transient McpProviderPasskeyPo passkey;
-
-    public McpProviderPasskeyPo getPasskey() {
-        return passkey;
-    }
-
-    public void setPasskey(McpProviderPasskeyPo passkey) {
-        this.passkey = passkey;
-    }
+    private transient McpProviderPassInfoPo passInfo;
 
     public Long getId() {
         return id;
@@ -158,4 +150,22 @@ public class McpProviderInfoPo implements Serializable {
         this.version = version;
     }
 
+    public McpProviderPassInfoPo getPassInfo() {
+        return passInfo;
+    }
+
+    public void setPassInfo(McpProviderPassInfoPo passInfo) {
+        this.passInfo = passInfo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof McpProviderInfoPo that)) return false;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getConsumer(), that.getConsumer()) && Objects.equals(getStore(), that.getStore()) && Objects.equals(getProvider(), that.getProvider()) && Objects.equals(getTtlSeconds(), that.getTtlSeconds()) && Objects.equals(getIsActive(), that.getIsActive()) && Objects.equals(getIsStatic(), that.getIsStatic()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getConsumer(), getStore(), getProvider(), getTtlSeconds(), getIsActive(), getIsStatic(), getCreatedDtm(), getUpdatedDtm(), getVersion());
+    }
 }

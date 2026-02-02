@@ -1,0 +1,138 @@
+
+GET http://localhost:8083/operation/extra/info
+Accept: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+
+###
+POST http://localhost:8083/operation/list
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+{
+  "limit": 3,
+  "sortBy": "CREATED_DTM",
+  "sortDirection": "ASC"
+}
+
+###
+PUT http://localhost:8083/operation/batch
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+{
+  "data": [
+    {
+      "uid": null,
+      "createdDtm": null,
+      "updatedDtm": null,
+      "ttlEffectedDtm": null,
+      "data": {
+        "description": "I am dummy redis.",
+        "name": "This is my new name!"
+      },
+      "ttlSec": null
+    },
+    {
+      "uid": null,
+      "createdDtm": null,
+      "updatedDtm": null,
+      "ttlEffectedDtm": null,
+      "data": {
+        "description": "I am dummy redis.",
+        "name": "This is my new name!"
+      },
+      "ttlSec": null
+    }
+  ]
+}
+
+###
+POST http://localhost:8083/operation/batch
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+{
+  "data": [
+    {
+      "uid": null,
+      "createdDtm": null,
+      "updatedDtm": null,
+      "ttlEffectedDtm": null,
+      "data": {
+        "description": "I am dummy redis.",
+        "name": "This is my name!"
+      },
+      "ttlSec": null
+    },
+    {
+      "uid": null,
+      "createdDtm": null,
+      "updatedDtm": null,
+      "ttlEffectedDtm": null,
+      "data": {
+        "description": "I am dummy redis.",
+        "name": "This is my name!"
+      },
+      "ttlSec": null
+    }
+  ]
+}
+
+###
+PUT http://localhost:8083/operation
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+{
+  "uid": null,
+  "createdDtm": null,
+  "updatedDtm": null,
+  "ttlEffectedDtm": null,
+  "data": {
+    "description": "I am dummy redis.",
+    "name": "This is my new name!"
+  },
+  "ttlSec": null
+}
+
+###
+DELETE http://localhost:8083/operation/{uid}
+Accept: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+###
+GET http://localhost:8083/operation/{uid}
+Accept: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+###
+
+###
+POST http://localhost:8083/operation
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+{
+  "uid": null,
+  "createdDtm": null,
+  "updatedDtm": null,
+  "ttlEffectedDtm": null,
+  "data": {
+    "description": "I am dummy redis.",
+    "name": "This is my name!"
+  },
+  "ttlSec": null
+}
+
+### Mongo Provider End --
+
+
