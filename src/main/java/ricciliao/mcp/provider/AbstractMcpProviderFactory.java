@@ -20,13 +20,13 @@ public abstract class AbstractMcpProviderFactory {
         this.lifecycle = lifecycle;
     }
 
+    public abstract McpProviderEnum whoAmI();
+
     protected abstract AbstractMcpProvider create(@Nonnull McpProviderInfoPo po);
 
     protected void destroy(@Nonnull AbstractMcpProvider provider) {
         provider.destroy();
     }
-
-    public abstract McpProviderEnum whoAmI();
 
     public McpProviderProperties getProviderProperties() {
 

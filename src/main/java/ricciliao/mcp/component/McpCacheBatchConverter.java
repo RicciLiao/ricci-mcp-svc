@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.annotation.Nonnull;
+import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.mcp.pojo.ProviderCache;
-import ricciliao.mcp.pojo.ProviderCacheMessage;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.McpProviderRegistry;
 import ricciliao.x.component.payload.PayloadData;
@@ -17,7 +17,7 @@ import ricciliao.x.component.sneaky.SneakyThrowUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class McpCacheBatchConverter extends McpCacheMessageConverter<ProviderCacheMessage.Batch> {
+public class McpCacheBatchConverter extends AbstractMcpCacheMessageConverter<AbstractProviderCacheMessage.Batch> {
 
     public McpCacheBatchConverter(ObjectMapper objectMapper,
                                   McpProviderRegistry mcpProviderRegistry) {
@@ -27,12 +27,12 @@ public class McpCacheBatchConverter extends McpCacheMessageConverter<ProviderCac
     @Override
     protected boolean supports(@Nonnull Class<?> clazz) {
 
-        return ProviderCacheMessage.Batch.class.isAssignableFrom(clazz);
+        return AbstractProviderCacheMessage.Batch.class.isAssignableFrom(clazz);
     }
 
     @Nonnull
     @Override
-    ProviderCacheMessage.Batch readInternal(@Nonnull JsonNode node, AbstractMcpProvider cacheProvider) throws JsonProcessingException {
+    AbstractProviderCacheMessage.Batch readInternal(@Nonnull JsonNode node, AbstractMcpProvider cacheProvider) throws JsonProcessingException {
         ArrayNode arrayNode = (ArrayNode) node.get("data");
         ProviderCache[] stores = new ProviderCache[arrayNode.size()];
         for (int i = 0; i < arrayNode.size(); i++) {
@@ -40,7 +40,7 @@ public class McpCacheBatchConverter extends McpCacheMessageConverter<ProviderCac
             });
         }
 
-        return ProviderCacheMessage.of(stores);
+        return AbstractProviderCacheMessage.of(stores);
     }
 
     @Nonnull

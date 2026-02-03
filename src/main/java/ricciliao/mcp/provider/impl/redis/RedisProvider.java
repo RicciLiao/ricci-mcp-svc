@@ -11,8 +11,8 @@ import redis.clients.jedis.Response;
 import redis.clients.jedis.search.Query;
 import redis.clients.jedis.search.SearchResult;
 import ricciliao.mcp.common.McpConstants;
+import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.mcp.pojo.ProviderCache;
-import ricciliao.mcp.pojo.ProviderCacheMessage;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.x.log.api.XLogger;
@@ -51,7 +51,7 @@ public class RedisProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean create(ProviderCacheMessage.Single single) {
+    public boolean create(AbstractProviderCacheMessage.Single single) {
         try {
 
             return 1L ==
@@ -74,7 +74,7 @@ public class RedisProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean update(ProviderCacheMessage.Single single) {
+    public boolean update(AbstractProviderCacheMessage.Single single) {
         try {
 
             return 1L ==
@@ -98,9 +98,9 @@ public class RedisProvider extends AbstractMcpProvider {
 
     @Nonnull
     @Override
-    public ProviderCacheMessage.Single get(String key) {
+    public AbstractProviderCacheMessage.Single get(String key) {
 
-        return ProviderCacheMessage.of(
+        return AbstractProviderCacheMessage.of(
                 this.objectMapper.convertValue(
                         this.jedisPooled.jsonGet(this.buildRedisKey(key)),
                         ProviderCache.class
@@ -115,7 +115,7 @@ public class RedisProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean create(ProviderCacheMessage.Batch batch) {
+    public boolean create(AbstractProviderCacheMessage.Batch batch) {
         List<Response<Object>> responseList = new ArrayList<>();
         try (Pipeline pipeline = this.jedisPooled.pipelined()) {
             for (ProviderCache datum : batch.getData()) {
@@ -143,7 +143,7 @@ public class RedisProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean update(ProviderCacheMessage.Batch batch) {
+    public boolean update(AbstractProviderCacheMessage.Batch batch) {
         List<Response<Object>> responseList = new ArrayList<>();
         try (Pipeline pipeline = this.jedisPooled.pipelined()) {
             for (ProviderCache datum : batch.getData()) {
@@ -172,7 +172,7 @@ public class RedisProvider extends AbstractMcpProvider {
 
     @Nonnull
     @Override
-    public ProviderCacheMessage.Batch list(McpQuery query) {
+    public AbstractProviderCacheMessage.Batch list(McpQuery query) {
         SearchResult sr = this.jedisPooled.ftSearch(this.indexName, this.toQuery(query));
         if (sr.getTotalResults() > 0) {
             ProviderCache[] stores = new ProviderCache[Math.toIntExact(sr.getTotalResults())];
@@ -188,17 +188,17 @@ public class RedisProvider extends AbstractMcpProvider {
                 logger.error(OP_FAILED, this.getIdentifier(), e);
             }
 
-            return ProviderCacheMessage.of(stores);
+            return AbstractProviderCacheMessage.of(stores);
         }
 
-        return ProviderCacheMessage.of(new ProviderCache[0]);
+        return AbstractProviderCacheMessage.of(new ProviderCache[0]);
     }
 
     @Override
     public boolean delete(McpQuery query) {
         boolean finish = false;
         while (!finish) {
-            ProviderCacheMessage.Batch batch = this.list(query);
+            AbstractProviderCacheMessage.Batch batch = this.list(query);
             if (ArrayUtils.isNotEmpty(batch.getData())) {
                 this.jedisPooled.del(
                         Arrays.stream(batch.getData())
@@ -228,12 +228,12 @@ public class RedisProvider extends AbstractMcpProvider {
             query.setSortBy(McpCriteria.Property.UPDATED_DTM);
             query.setSortDirection(McpCriteria.Sort.Direction.DESC);
             query.setLimit(1L);
-            ProviderCacheMessage.Batch maxUpdated = this.list(query);
+            AbstractProviderCacheMessage.Batch maxUpdated = this.list(query);
 
             query.setSortBy(McpCriteria.Property.CREATED_DTM);
             query.setSortDirection(McpCriteria.Sort.Direction.ASC);
             query.setLimit(1L);
-            ProviderCacheMessage.Batch minCreated = this.list(query);
+            AbstractProviderCacheMessage.Batch minCreated = this.list(query);
 
             result.setCreatedDtm(minCreated.getData()[0].getCreatedDtm());
             result.setMaxUpdatedDtm(maxUpdated.getData()[0].getUpdatedDtm());

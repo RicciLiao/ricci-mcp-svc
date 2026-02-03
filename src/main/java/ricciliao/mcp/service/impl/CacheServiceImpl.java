@@ -3,8 +3,8 @@ package ricciliao.mcp.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.mcp.pojo.ProviderCache;
-import ricciliao.mcp.pojo.ProviderCacheMessage;
 import ricciliao.mcp.provider.McpProviderRegistry;
 import ricciliao.mcp.service.CacheService;
 import ricciliao.x.component.random.RandomGenerator;
@@ -26,7 +26,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public String create(McpIdentifier identifier, ProviderCacheMessage.Single single) {
+    public String create(McpIdentifier identifier, AbstractProviderCacheMessage.Single single) {
         Instant now = Instant.now();
         single.getData().setCreatedDtm(now);
         single.getData().setUpdatedDtm(now);
@@ -39,8 +39,8 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public boolean update(McpIdentifier identifier, ProviderCacheMessage.Single single) {
-        ProviderCacheMessage.Single existing = this.get(identifier, single.getData().getUid());
+    public boolean update(McpIdentifier identifier, AbstractProviderCacheMessage.Single single) {
+        AbstractProviderCacheMessage.Single existing = this.get(identifier, single.getData().getUid());
         if (Objects.isNull(existing.getData())) {
 
             return false;
@@ -54,14 +54,14 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public ProviderCacheMessage.Single get(McpIdentifier identifier, String id) {
+    public AbstractProviderCacheMessage.Single get(McpIdentifier identifier, String id) {
 
         return mcpProviderRegistry.get(identifier).get(id);
     }
 
     @Override
     public boolean delete(McpIdentifier identifier, String id) {
-        ProviderCacheMessage.Single single = this.get(identifier, id);
+        AbstractProviderCacheMessage.Single single = this.get(identifier, id);
         if (Objects.isNull(single.getData())) {
 
             return false;
@@ -72,7 +72,7 @@ public class CacheServiceImpl implements CacheService {
 
 
     @Override
-    public boolean create(McpIdentifier identifier, ProviderCacheMessage.Batch batch) {
+    public boolean create(McpIdentifier identifier, AbstractProviderCacheMessage.Batch batch) {
         Instant now = Instant.now();
         if (Boolean.TRUE.equals(mcpProviderRegistry.isStatic(identifier))) {
             for (ProviderCache cache : batch.getData()) {
@@ -91,7 +91,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public boolean update(McpIdentifier identifier, ProviderCacheMessage.Batch batch) {
+    public boolean update(McpIdentifier identifier, AbstractProviderCacheMessage.Batch batch) {
         for (int i = 0; i < batch.getData().length; i++) {
             ProviderCache existing = this.get(identifier, batch.getData()[i].getUid()).getData();
             if (Objects.isNull(existing)) {
@@ -108,7 +108,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public ProviderCacheMessage.Batch list(McpIdentifier identifier, McpQuery query) {
+    public AbstractProviderCacheMessage.Batch list(McpIdentifier identifier, McpQuery query) {
 
         return mcpProviderRegistry.get(identifier).list(query);
     }

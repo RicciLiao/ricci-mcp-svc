@@ -12,9 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.mcp.pojo.McpCacheMap;
 import ricciliao.mcp.pojo.ProviderCache;
-import ricciliao.mcp.pojo.ProviderCacheMessage;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.McpProviderRegistry;
 import ricciliao.x.component.exception.ParameterException;
@@ -33,13 +33,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class McpCacheMessageConverter<T extends ProviderCacheMessage<? extends Serializable>> extends AbstractHttpMessageConverter<T> {
+public abstract class AbstractMcpCacheMessageConverter<T extends AbstractProviderCacheMessage<? extends Serializable>> extends AbstractHttpMessageConverter<T> {
 
     protected final ObjectMapper objectMapper;
     private final McpProviderRegistry mcpProviderRegistry;
     private final ResponseHttpMessageConverter responseHttpMessageConverter;
 
-    protected McpCacheMessageConverter(ObjectMapper objectMapper, McpProviderRegistry mcpProviderRegistry) {
+    protected AbstractMcpCacheMessageConverter(ObjectMapper objectMapper, McpProviderRegistry mcpProviderRegistry) {
         super(MediaType.APPLICATION_JSON);
         this.objectMapper = objectMapper;
         this.mcpProviderRegistry = mcpProviderRegistry;

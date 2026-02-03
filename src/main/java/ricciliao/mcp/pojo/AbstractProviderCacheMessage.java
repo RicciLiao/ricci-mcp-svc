@@ -4,16 +4,16 @@ package ricciliao.mcp.pojo;
 import java.io.Serial;
 import java.io.Serializable;
 
-public abstract class ProviderCacheMessage<T extends Serializable> implements Serializable {
+public abstract class AbstractProviderCacheMessage<T extends Serializable> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1405990681223875295L;
 
     private T data;
 
-    protected ProviderCacheMessage() {
+    protected AbstractProviderCacheMessage() {
     }
 
-    protected ProviderCacheMessage(T data) {
+    protected AbstractProviderCacheMessage(T data) {
         this.data = data;
     }
 
@@ -35,7 +35,7 @@ public abstract class ProviderCacheMessage<T extends Serializable> implements Se
         return new Batch(cache);
     }
 
-    public static class Single extends ProviderCacheMessage<ProviderCache> {
+    public static class Single extends AbstractProviderCacheMessage<ProviderCache> {
         @Serial
         private static final long serialVersionUID = -5489299128428705085L;
 
@@ -47,7 +47,7 @@ public abstract class ProviderCacheMessage<T extends Serializable> implements Se
         }
     }
 
-    public static class Batch extends ProviderCacheMessage<ProviderCache[]> {
+    public static class Batch extends AbstractProviderCacheMessage<ProviderCache[]> {
         @Serial
         private static final long serialVersionUID = -5489299128428705085L;
 

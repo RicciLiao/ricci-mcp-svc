@@ -17,8 +17,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import ricciliao.mcp.common.McpConstants;
+import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.mcp.pojo.ProviderCache;
-import ricciliao.mcp.pojo.ProviderCacheMessage;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.x.mcp.McpProviderInfo;
@@ -44,13 +44,13 @@ public class MongoProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean create(ProviderCacheMessage.Single single) {
+    public boolean create(AbstractProviderCacheMessage.Single single) {
 
         return Objects.nonNull(this.mongoCollection.insertOne(single.getData()).getInsertedId());
     }
 
     @Override
-    public boolean update(ProviderCacheMessage.Single single) {
+    public boolean update(AbstractProviderCacheMessage.Single single) {
         UpdateResult result =
                 this.mongoCollection.replaceOne(Filters.eq(super.getPropertyFieldName(McpCriteria.Property.ID), single.getData().getUid()), single.getData());
 
@@ -59,9 +59,9 @@ public class MongoProvider extends AbstractMcpProvider {
 
     @Nonnull
     @Override
-    public ProviderCacheMessage.Single get(String id) {
+    public AbstractProviderCacheMessage.Single get(String id) {
 
-        return ProviderCacheMessage.of(this.mongoCollection.find(Filters.eq(super.getPropertyFieldName(McpCriteria.Property.ID), id)).first());
+        return AbstractProviderCacheMessage.of(this.mongoCollection.find(Filters.eq(super.getPropertyFieldName(McpCriteria.Property.ID), id)).first());
     }
 
     @Override
@@ -72,14 +72,14 @@ public class MongoProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean create(ProviderCacheMessage.Batch batch) {
+    public boolean create(AbstractProviderCacheMessage.Batch batch) {
         InsertManyResult result = this.mongoCollection.insertMany(Arrays.asList(batch.getData()));
 
         return result.getInsertedIds().size() == batch.getData().length;
     }
 
     @Override
-    public boolean update(ProviderCacheMessage.Batch batch) {
+    public boolean update(AbstractProviderCacheMessage.Batch batch) {
         List<WriteModel<ProviderCache>> bulkOperations =
                 Arrays.stream(batch.getData())
                         .map(cache -> new ReplaceOneModel<>(Filters.eq(super.getPropertyFieldName(McpCriteria.Property.ID), cache.getUid()), cache))
@@ -91,7 +91,7 @@ public class MongoProvider extends AbstractMcpProvider {
 
     @Nonnull
     @Override
-    public ProviderCacheMessage.Batch list(McpQuery query) {
+    public AbstractProviderCacheMessage.Batch list(McpQuery query) {
         List<ProviderCache> data =
                 this.mongoCollection
                         .find(this.convert2Filter(query))
@@ -100,10 +100,10 @@ public class MongoProvider extends AbstractMcpProvider {
                         .into(new ArrayList<>());
         if (CollectionUtils.isEmpty(data)) {
 
-            return ProviderCacheMessage.of(new ProviderCache[0]);
+            return AbstractProviderCacheMessage.of(new ProviderCache[0]);
         }
 
-        return ProviderCacheMessage.of(data.toArray(new ProviderCache[0]));
+        return AbstractProviderCacheMessage.of(data.toArray(new ProviderCache[0]));
     }
 
     @Override

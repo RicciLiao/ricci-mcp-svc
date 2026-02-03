@@ -1,27 +1,27 @@
 package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
-import ricciliao.mcp.pojo.ProviderCacheMessage;
+import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.x.mcp.McpProviderInfo;
 import ricciliao.x.mcp.query.McpQuery;
 
 public interface McpProviderRepository {
 
-    boolean create(ProviderCacheMessage.Single single);
+    boolean create(AbstractProviderCacheMessage.Single single);
 
-    boolean update(ProviderCacheMessage.Single single);
+    boolean update(AbstractProviderCacheMessage.Single single);
 
     @Nonnull
-    ProviderCacheMessage.Single get(String id);
+    AbstractProviderCacheMessage.Single get(String id);
 
     boolean delete(String id);
 
-    boolean create(ProviderCacheMessage.Batch batch);
+    boolean create(AbstractProviderCacheMessage.Batch batch);
 
-    boolean update(ProviderCacheMessage.Batch batch);
+    boolean update(AbstractProviderCacheMessage.Batch batch);
 
     @Nonnull
-    ProviderCacheMessage.Batch list(McpQuery query);
+    AbstractProviderCacheMessage.Batch list(McpQuery query);
 
     boolean delete(McpQuery query);
 
