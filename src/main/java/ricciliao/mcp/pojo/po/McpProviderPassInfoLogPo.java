@@ -12,11 +12,11 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "mcp_provider_pass_info_log", schema = "mcp")
-@IdClass(McpProviderPassInfoLogPoId.class)
+@Table(name = "mcp_provider_pass_info_log")
+@IdClass(McpProviderPassInfoLogId.class)
 public class McpProviderPassInfoLogPo implements LoggerPo {
     @Serial
-    private static final long serialVersionUID = 3306243738243137271L;
+    private static final long serialVersionUID = 1082445160336480679L;
 
     @Id
     @Column(name = "provider_info_id", nullable = false)
@@ -29,8 +29,14 @@ public class McpProviderPassInfoLogPo implements LoggerPo {
     @Column(name = "pass_key", nullable = false, length = 16)
     private String passKey;
 
+    @Column(name = "created_by", nullable = false)
+    private Long createdBy;
+
     @Column(name = "created_dtm", nullable = false)
     private Instant createdDtm;
+
+    @Column(name = "updated_by", nullable = false)
+    private Long updatedBy;
 
     @Column(name = "updated_dtm", nullable = false)
     private Instant updatedDtm;
@@ -41,6 +47,9 @@ public class McpProviderPassInfoLogPo implements LoggerPo {
     @Column(name = "action_cd", nullable = false, length = 1)
     private Character actionCd;
 
+    @Column(name = "action_by", nullable = false)
+    private Long actionBy;
+
     public Long getProviderInfoId() {
         return providerInfoId;
     }
@@ -49,12 +58,10 @@ public class McpProviderPassInfoLogPo implements LoggerPo {
         this.providerInfoId = providerInfoId;
     }
 
-    @Override
     public Instant getActionDtm() {
         return actionDtm;
     }
 
-    @Override
     public void setActionDtm(Instant actionDtm) {
         this.actionDtm = actionDtm;
     }
@@ -67,12 +74,28 @@ public class McpProviderPassInfoLogPo implements LoggerPo {
         this.passKey = passKey;
     }
 
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
     public Instant getCreatedDtm() {
         return createdDtm;
     }
 
     public void setCreatedDtm(Instant createdDtm) {
         this.createdDtm = createdDtm;
+    }
+
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public Instant getUpdatedDtm() {
@@ -91,24 +114,30 @@ public class McpProviderPassInfoLogPo implements LoggerPo {
         this.version = version;
     }
 
-    @Override
     public Character getActionCd() {
         return actionCd;
     }
 
-    @Override
     public void setActionCd(Character actionCd) {
         this.actionCd = actionCd;
+    }
+
+    public Long getActionBy() {
+        return actionBy;
+    }
+
+    public void setActionBy(Long actionBy) {
+        this.actionBy = actionBy;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof McpProviderPassInfoLogPo that)) return false;
-        return Objects.equals(getProviderInfoId(), that.getProviderInfoId()) && Objects.equals(getActionDtm(), that.getActionDtm()) && Objects.equals(getPassKey(), that.getPassKey()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion()) && Objects.equals(getActionCd(), that.getActionCd());
+        return Objects.equals(getProviderInfoId(), that.getProviderInfoId()) && Objects.equals(getActionDtm(), that.getActionDtm()) && Objects.equals(getPassKey(), that.getPassKey()) && Objects.equals(getCreatedBy(), that.getCreatedBy()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedBy(), that.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion()) && Objects.equals(getActionCd(), that.getActionCd()) && Objects.equals(getActionBy(), that.getActionBy());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getProviderInfoId(), getActionDtm(), getPassKey(), getCreatedDtm(), getUpdatedDtm(), getVersion(), getActionCd());
+        return Objects.hash(getProviderInfoId(), getActionDtm(), getPassKey(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion(), getActionCd(), getActionBy());
     }
 }

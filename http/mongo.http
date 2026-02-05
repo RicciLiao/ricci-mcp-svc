@@ -11,7 +11,7 @@ Cache-Customer: dummy
 Cache-Store: mongo
 
 {
-  "limit": 3,
+  "limit": 5,
   "sortBy": "CREATED_DTM",
   "sortDirection": "ASC"
 }
@@ -25,7 +25,7 @@ Cache-Store: mongo
 {
   "data": [
     {
-      "uid": null,
+      "uid": "8cd91d8HZEQi",
       "createdDtm": null,
       "updatedDtm": null,
       "ttlEffectedDtm": null,
@@ -36,7 +36,7 @@ Cache-Store: mongo
       "ttlSec": null
     },
     {
-      "uid": null,
+      "uid": "z9YuEOgM0F9I",
       "createdDtm": null,
       "updatedDtm": null,
       "ttlEffectedDtm": null,
@@ -89,7 +89,7 @@ Cache-Customer: dummy
 Cache-Store: mongo
 
 {
-  "uid": null,
+  "uid": "5e4KEa4oEWdh",
   "createdDtm": null,
   "updatedDtm": null,
   "ttlEffectedDtm": null,
@@ -101,13 +101,13 @@ Cache-Store: mongo
 }
 
 ###
-DELETE http://localhost:8083/operation/{uid}
+DELETE http://localhost:8083/operation/2H3iXj1JjbPc
 Accept: application/json
 Cache-Customer: dummy
 Cache-Store: mongo
 
 ###
-GET http://localhost:8083/operation/{uid}
+GET http://localhost:8083/operation/2H3iXj1JjbPc
 Accept: application/json
 Cache-Customer: dummy
 Cache-Store: mongo

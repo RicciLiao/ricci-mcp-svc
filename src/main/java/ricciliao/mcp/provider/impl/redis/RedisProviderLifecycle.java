@@ -2,11 +2,13 @@ package ricciliao.mcp.provider.impl.redis;
 
 import jakarta.annotation.Nonnull;
 import org.springframework.lang.NonNull;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.search.IndexDefinition;
 import redis.clients.jedis.search.IndexOptions;
 import redis.clients.jedis.search.Schema;
-import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.AbstractMcpProviderLifecycle;
 import ricciliao.mcp.provider.McpProviderRegistry;
@@ -15,21 +17,36 @@ import ricciliao.x.mcp.query.McpCriteria;
 public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
 
     private final JedisPooled authJedisPooled;
+    private final JedisPool authJedisPool;
 
     public RedisProviderLifecycle(@NonNull McpProviderRegistry registry,
-                                  @Nonnull JedisPooled authJedisPooled) {
+                                  @Nonnull JedisPooled authJedisPooled,
+                                  @Nonnull JedisPool authJedisPool) {
         super(registry);
         this.authJedisPooled = authJedisPooled;
+        this.authJedisPool = authJedisPool;
     }
 
     @Override
-    protected void preCreation(@NonNull McpProviderInfoPo po) {
-        //do nothing
+    protected void preCreation(@NonNull McpProviderInfoBo bo) {
+        try (Jedis jedis = authJedisPool.getResource()) {
+            if (!jedis.aclUsers().contains(bo.getInfo().getConsumer())) {
+                jedis.aclSetUser(
+                        bo.getInfo().getConsumer(),
+                        "on",
+                        ">" + bo.getPassInfo().getPassKey(),
+                        "~" + RedisHelper.keyPrefix(bo.getInfo().getConsumer(), bo.getInfo().getStore()) + "*",
+                        "+@all",
+                        "-@admin"
+                );
+            }
+        }
     }
 
     @Override
-    protected void postCreation(@NonNull AbstractMcpProvider provider, @NonNull McpProviderInfoPo po) {
-        String indexName = provider.getIdentifier() + "_index";
+    protected void postCreation(@NonNull AbstractMcpProvider provider, @NonNull McpProviderInfoBo bo) {
+        String indexName = RedisHelper.indexName(provider.getIdentifier());
+        String prefix = RedisHelper.keyPrefix(provider.getIdentifier());
         if (
                 this.authJedisPooled
                         .ftList()
@@ -50,19 +67,20 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
                             .defaultOptions()
                             .setDefinition(
                                     new IndexDefinition(IndexDefinition.Type.JSON)
-                                            .setPrefixes(provider.getIdentifier().toString().replace("_", ":"))),
+                                            .setPrefixes(prefix)
+                            ),
                     Schema.from(id, createdDtm, updatedDtm)
             );
         }
     }
 
     @Override
-    protected void preDestruction(@NonNull AbstractMcpProvider provider, @NonNull McpProviderInfoPo po) {
+    protected void preDestruction(@NonNull AbstractMcpProvider provider, @NonNull McpProviderInfoBo bo) {
         //do nothing
     }
 
     @Override
-    protected void postDestruction(@NonNull McpProviderInfoPo po) {
+    protected void postDestruction(@NonNull McpProviderInfoBo bo) {
         //do nothing
     }
 }

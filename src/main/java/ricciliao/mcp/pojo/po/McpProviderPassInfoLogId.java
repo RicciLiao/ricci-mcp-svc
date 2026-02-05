@@ -5,17 +5,17 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-public class McpProviderPassInfoLogPoId implements Serializable {
+public class McpProviderPassInfoLogId implements Serializable {
     @Serial
     private static final long serialVersionUID = 4676277425046576295L;
 
     private Long providerInfoId;
     private Instant actionDtm;
 
-    public McpProviderPassInfoLogPoId() {
+    public McpProviderPassInfoLogId() {
     }
 
-    public McpProviderPassInfoLogPoId(Long providerInfoId, Instant actionDtm) {
+    public McpProviderPassInfoLogId(Long providerInfoId, Instant actionDtm) {
         this.providerInfoId = providerInfoId;
         this.actionDtm = actionDtm;
     }
@@ -40,7 +40,7 @@ public class McpProviderPassInfoLogPoId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        McpProviderPassInfoLogPoId entity = (McpProviderPassInfoLogPoId) o;
+        McpProviderPassInfoLogId entity = (McpProviderPassInfoLogId) o;
         return Objects.equals(this.providerInfoId, entity.providerInfoId) &&
                 Objects.equals(this.actionDtm, entity.actionDtm);
     }

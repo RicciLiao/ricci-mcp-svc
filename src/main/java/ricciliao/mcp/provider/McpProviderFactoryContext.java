@@ -2,13 +2,14 @@ package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
 import ricciliao.mcp.common.McpProviderEnum;
-import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.common.McpSecondaryCodeEnum;
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.x.component.exception.AbstractException;
+import ricciliao.x.component.exception.DataException;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class McpProviderFactoryContext {
@@ -22,33 +23,34 @@ public class McpProviderFactoryContext {
         }
     }
 
-    public Optional<AbstractMcpProviderFactory> get(@Nonnull McpProviderInfoPo po) {
+    public Optional<AbstractMcpProviderFactory> get(@Nonnull McpProviderInfoBo bo) {
 
         return providerFactoryMap
                 .entrySet()
                 .stream()
-                .filter(entry -> entry.getKey().getIdentity().equals(po.getProvider()))
+                .filter(entry ->
+                        entry.getKey().getProvider().equalsIgnoreCase(bo.getType().getProvider()))
                 .map(Map.Entry::getValue)
                 .findFirst();
     }
 
-    public AbstractMcpProvider create(@Nonnull McpProviderInfoPo po) throws AbstractException {
-        Optional<? extends AbstractMcpProviderFactory> factory = this.get(po);
+    public AbstractMcpProvider create(@Nonnull McpProviderInfoBo bo) throws AbstractException {
+        Optional<? extends AbstractMcpProviderFactory> factory = this.get(bo);
         if (factory.isEmpty()) {
 
-            throw new NoSuchElementException(String.format("McpProviderFactory[consumer: %s, store: %s] does not exist", po.getConsumer(), po.getStore()));
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getInfo().getConsumer(), bo.getInfo().getStore()));
         }
 
-        return factory.get().delegateCreate(po);
+        return factory.get().delegateCreate(bo);
     }
 
-    public void destroy(@Nonnull McpProviderInfoPo po) {
-        Optional<AbstractMcpProviderFactory> factory = this.get(po);
+    public void destroy(@Nonnull McpProviderInfoBo bo) throws AbstractException {
+        Optional<AbstractMcpProviderFactory> factory = this.get(bo);
         if (factory.isEmpty()) {
 
-            throw new NoSuchElementException(String.format("McpProviderFactory[consumer: %s, store: %s] does not exist", po.getConsumer(), po.getStore()));
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getInfo().getConsumer(), bo.getInfo().getStore()));
         }
-        factory.get().delegateDestroy(po);
+        factory.get().delegateDestroy(bo);
     }
 
 }

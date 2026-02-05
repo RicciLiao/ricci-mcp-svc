@@ -6,16 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery;
+import ricciliao.mcp.pojo.po.McpProviderInfoLogId;
 import ricciliao.mcp.pojo.po.McpProviderInfoLogPo;
-import ricciliao.mcp.pojo.po.McpProviderInfoLogPoId;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface McpProviderInfoLogRepository extends JpaRepository<McpProviderInfoLogPo, McpProviderInfoLogPoId> {
+public interface McpProviderInfoLogRepository extends JpaRepository<McpProviderInfoLogPo, McpProviderInfoLogId> {
     @Override
-    void deleteAllByIdInBatch(Iterable<McpProviderInfoLogPoId> mcpProviderInfoLogPoIds);
+    void deleteAllByIdInBatch(Iterable<McpProviderInfoLogId> mcpProviderInfoLogPoIds);
 
     @Override
     void deleteAllInBatch();
@@ -33,7 +33,7 @@ public interface McpProviderInfoLogRepository extends JpaRepository<McpProviderI
     void flush();
 
     @Override
-    McpProviderInfoLogPo getReferenceById(McpProviderInfoLogPoId mcpProviderInfoLogPoId);
+    McpProviderInfoLogPo getReferenceById(McpProviderInfoLogId mcpProviderInfoLogPoId);
 
     @Override
     <S extends McpProviderInfoLogPo> List<S> saveAllAndFlush(Iterable<S> entities);
@@ -45,7 +45,7 @@ public interface McpProviderInfoLogRepository extends JpaRepository<McpProviderI
     List<McpProviderInfoLogPo> findAll();
 
     @Override
-    List<McpProviderInfoLogPo> findAllById(Iterable<McpProviderInfoLogPoId> mcpProviderInfoLogPoIds);
+    List<McpProviderInfoLogPo> findAllById(Iterable<McpProviderInfoLogId> mcpProviderInfoLogPoIds);
 
     @Override
     <S extends McpProviderInfoLogPo> List<S> saveAll(Iterable<S> entities);
@@ -63,16 +63,16 @@ public interface McpProviderInfoLogRepository extends JpaRepository<McpProviderI
     void deleteAll(Iterable<? extends McpProviderInfoLogPo> entities);
 
     @Override
-    void deleteAllById(Iterable<? extends McpProviderInfoLogPoId> mcpProviderInfoLogPoIds);
+    void deleteAllById(Iterable<? extends McpProviderInfoLogId> mcpProviderInfoLogPoIds);
 
     @Override
-    void deleteById(McpProviderInfoLogPoId mcpProviderInfoLogPoId);
+    void deleteById(McpProviderInfoLogId mcpProviderInfoLogPoId);
 
     @Override
-    boolean existsById(McpProviderInfoLogPoId mcpProviderInfoLogPoId);
+    boolean existsById(McpProviderInfoLogId mcpProviderInfoLogPoId);
 
     @Override
-    Optional<McpProviderInfoLogPo> findById(McpProviderInfoLogPoId mcpProviderInfoLogPoId);
+    Optional<McpProviderInfoLogPo> findById(McpProviderInfoLogId mcpProviderInfoLogPoId);
 
     @Override
     <S extends McpProviderInfoLogPo> S save(S entity);

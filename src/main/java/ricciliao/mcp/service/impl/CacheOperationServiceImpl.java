@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.mcp.pojo.ProviderCache;
 import ricciliao.mcp.provider.McpProviderRegistry;
-import ricciliao.mcp.service.CacheService;
+import ricciliao.mcp.service.CacheOperationService;
 import ricciliao.x.component.random.RandomGenerator;
 import ricciliao.x.mcp.McpIdentifier;
 import ricciliao.x.mcp.McpProviderInfo;
@@ -15,8 +15,8 @@ import ricciliao.x.mcp.query.McpQuery;
 import java.time.Instant;
 import java.util.Objects;
 
-@Service("cacheService")
-public class CacheServiceImpl implements CacheService {
+@Service("cacheOperationService")
+public class CacheOperationServiceImpl implements CacheOperationService {
 
     private McpProviderRegistry mcpProviderRegistry;
 
@@ -45,12 +45,12 @@ public class CacheServiceImpl implements CacheService {
 
             return false;
         }
-        single.getData().setCreatedDtm(existing.getData().getCreatedDtm());
+        existing.getData().setData(single.getData().getData());
         if (Boolean.FALSE.equals(mcpProviderRegistry.isStatic(identifier))) {
-            single.getData().setUpdatedDtm(Instant.now());
+            existing.getData().setUpdatedDtm(Instant.now());
         }
 
-        return mcpProviderRegistry.get(identifier).update(single);
+        return mcpProviderRegistry.get(identifier).update(existing);
     }
 
     @Override
@@ -92,19 +92,21 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public boolean update(McpIdentifier identifier, AbstractProviderCacheMessage.Batch batch) {
+        ProviderCache[] existings = new ProviderCache[batch.getData().length];
         for (int i = 0; i < batch.getData().length; i++) {
             ProviderCache existing = this.get(identifier, batch.getData()[i].getUid()).getData();
             if (Objects.isNull(existing)) {
 
                 return false;
             }
-            batch.getData()[i].setCreatedDtm(existing.getCreatedDtm());
+            existings[i] = existing;
+            existing.setData(batch.getData()[i].getData());
             if (Boolean.FALSE.equals(mcpProviderRegistry.isStatic(identifier))) {
                 existing.setUpdatedDtm(Instant.now());
             }
         }
 
-        return mcpProviderRegistry.get(identifier).update(batch);
+        return mcpProviderRegistry.get(identifier).update(AbstractProviderCacheMessage.of(existings));
     }
 
     @Override

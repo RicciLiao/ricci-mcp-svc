@@ -5,17 +5,17 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-public class McpProviderInfoLogPoId implements Serializable {
+public class McpProviderInfoLogId implements Serializable {
     @Serial
     private static final long serialVersionUID = 918561131645154420L;
 
     private Long id;
     private Instant actionDtm;
 
-    public McpProviderInfoLogPoId() {
+    public McpProviderInfoLogId() {
     }
 
-    public McpProviderInfoLogPoId(Long id, Instant actionDtm) {
+    public McpProviderInfoLogId(Long id, Instant actionDtm) {
         this.id = id;
         this.actionDtm = actionDtm;
     }
@@ -40,7 +40,7 @@ public class McpProviderInfoLogPoId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        McpProviderInfoLogPoId entity = (McpProviderInfoLogPoId) o;
+        McpProviderInfoLogId entity = (McpProviderInfoLogId) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.actionDtm, entity.actionDtm);
     }

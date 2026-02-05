@@ -5,7 +5,8 @@ import ricciliao.x.component.payload.response.code.SecondaryCode;
 
 public enum McpSecondaryCodeEnum implements SecondaryCode {
 
-    PROVIDER_NOT_EXISTED(1, "Can not find the provider factory with {}."),
+    CONSUMER_STORE_EXISTED(1, "Provider {}-{} already exists"),
+    PROVIDER_FACTORY_NOT_EXISTED(1, "ProviderFactory {}-{} does not exist"),
     ;
 
     private final int id;

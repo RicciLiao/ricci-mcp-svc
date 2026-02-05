@@ -12,9 +12,9 @@ Cache-Customer: dummy
 Cache-Store: redis
 
 {
-  "limit": 3,
+  "limit": 5,
   "sortBy": "CREATED_DTM",
-  "sortDirection": "ASC"
+  "sortDirection": "DESC"
 }
 
 ###
@@ -26,7 +26,7 @@ Cache-Store: redis
 {
   "data": [
     {
-      "uid": null,
+      "uid": "7w6o1Tlv2dIC",
       "createdDtm": null,
       "updatedDtm": null,
       "ttlEffectedDtm": null,
@@ -37,7 +37,7 @@ Cache-Store: redis
       "ttlSec": null
     },
     {
-      "uid": null,
+      "uid": "9l5jdNrIZ8In",
       "createdDtm": null,
       "updatedDtm": null,
       "ttlEffectedDtm": null,
@@ -90,7 +90,7 @@ Cache-Customer: dummy
 Cache-Store: redis
 
 {
-  "uid": null,
+  "uid": "9l5jdNrIZ8In",
   "createdDtm": null,
   "updatedDtm": null,
   "ttlEffectedDtm": null,
@@ -102,13 +102,13 @@ Cache-Store: redis
 }
 
 ###
-DELETE http://localhost:8083/operation/{uid}
+DELETE http://localhost:8083/operation/XN8zR9Sjud4X
 Accept: application/json
 Cache-Customer: dummy
 Cache-Store: redis
 
 ###
-GET http://localhost:8083/operation/{uid}
+GET http://localhost:8083/operation/XN8zR9Sjud4X
 Accept: application/json
 Cache-Customer: dummy
 Cache-Store: redis

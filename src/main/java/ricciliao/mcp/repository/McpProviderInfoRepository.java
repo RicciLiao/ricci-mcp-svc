@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.FluentQuery;
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 
 import java.util.List;
@@ -98,9 +99,12 @@ public interface McpProviderInfoRepository extends JpaRepository<McpProviderInfo
     @Override
     <S extends McpProviderInfoPo> Optional<S> findOne(Example<S> example);
 
-    @Query("select new McpProviderInfoPo(po, passkey) " +
+    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_) " +
             "from McpProviderInfoPo po " +
+            "inner join McpProviderTypePo type_ on type_.id = po.provider " +
             "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id " +
-            "where po.isActive = true ")
-    List<McpProviderInfoPo> initialize();
+            "where po.active = true ")
+    List<McpProviderInfoBo> initialize();
+
+    boolean existsByConsumerAndStore(String consumer, String store);
 }

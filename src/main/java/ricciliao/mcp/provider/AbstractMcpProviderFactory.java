@@ -2,7 +2,7 @@ package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
 import ricciliao.mcp.common.McpProviderEnum;
-import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.properties.McpProviderProperties;
 import ricciliao.x.component.exception.AbstractException;
 
@@ -22,7 +22,7 @@ public abstract class AbstractMcpProviderFactory {
 
     public abstract McpProviderEnum whoAmI();
 
-    protected abstract AbstractMcpProvider create(@Nonnull McpProviderInfoPo po);
+    protected abstract AbstractMcpProvider create(@Nonnull McpProviderInfoBo po);
 
     protected void destroy(@Nonnull AbstractMcpProvider provider) {
         provider.destroy();
@@ -38,7 +38,7 @@ public abstract class AbstractMcpProviderFactory {
         return clientFactory;
     }
 
-    protected final AbstractMcpProvider delegateCreate(@Nonnull McpProviderInfoPo po) throws AbstractException {
+    protected final AbstractMcpProvider delegateCreate(@Nonnull McpProviderInfoBo po) throws AbstractException {
         this.lifecycle.delegatePreCreation(po);
         AbstractMcpProvider provider = this.create(po);
         this.lifecycle.delegatePostCreation(provider, po);
@@ -46,7 +46,7 @@ public abstract class AbstractMcpProviderFactory {
         return provider;
     }
 
-    protected final void delegateDestroy(@Nonnull McpProviderInfoPo po) {
+    protected final void delegateDestroy(@Nonnull McpProviderInfoBo po) {
         AbstractMcpProvider provider = this.lifecycle.delegatePreDestruction(po);
         this.destroy(provider);
         this.lifecycle.delegatePostDestruction(po);

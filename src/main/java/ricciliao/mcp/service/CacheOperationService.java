@@ -6,7 +6,7 @@ import ricciliao.x.mcp.McpIdentifier;
 import ricciliao.x.mcp.McpProviderInfo;
 import ricciliao.x.mcp.query.McpQuery;
 
-public interface CacheService {
+public interface CacheOperationService {
 
     String create(McpIdentifier identifier, AbstractProviderCacheMessage.Single single);
 

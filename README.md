@@ -132,7 +132,7 @@ public class McpIdentifier implements Serializable {
 }
 ```
 
-The identification of cache data, please refer `📝Configuration`.
+The identification of cache data.
 
 ---
 

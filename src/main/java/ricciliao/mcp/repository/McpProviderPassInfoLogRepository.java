@@ -6,17 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoLogId;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoLogPo;
-import ricciliao.mcp.pojo.po.McpProviderPassInfoLogPoId;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface McpProviderPassInfoLogRepository extends JpaRepository<McpProviderPassInfoLogPo, McpProviderPassInfoLogPoId> {
+public interface McpProviderPassInfoLogRepository extends JpaRepository<McpProviderPassInfoLogPo, McpProviderPassInfoLogId> {
 
     @Override
-    void deleteAllByIdInBatch(Iterable<McpProviderPassInfoLogPoId> mcpProviderPasskeyLogIds);
+    void deleteAllByIdInBatch(Iterable<McpProviderPassInfoLogId> mcpProviderPasskeyLogIds);
 
     @Override
     void deleteAllInBatch();
@@ -34,7 +34,7 @@ public interface McpProviderPassInfoLogRepository extends JpaRepository<McpProvi
     void flush();
 
     @Override
-    McpProviderPassInfoLogPo getReferenceById(McpProviderPassInfoLogPoId mcpProviderPasskeyLogId);
+    McpProviderPassInfoLogPo getReferenceById(McpProviderPassInfoLogId mcpProviderPasskeyLogId);
 
     @Override
     <S extends McpProviderPassInfoLogPo> List<S> saveAllAndFlush(Iterable<S> entities);
@@ -46,7 +46,7 @@ public interface McpProviderPassInfoLogRepository extends JpaRepository<McpProvi
     List<McpProviderPassInfoLogPo> findAll();
 
     @Override
-    List<McpProviderPassInfoLogPo> findAllById(Iterable<McpProviderPassInfoLogPoId> mcpProviderPasskeyLogIds);
+    List<McpProviderPassInfoLogPo> findAllById(Iterable<McpProviderPassInfoLogId> mcpProviderPasskeyLogIds);
 
     @Override
     <S extends McpProviderPassInfoLogPo> List<S> saveAll(Iterable<S> entities);
@@ -64,16 +64,16 @@ public interface McpProviderPassInfoLogRepository extends JpaRepository<McpProvi
     void deleteAll(Iterable<? extends McpProviderPassInfoLogPo> entities);
 
     @Override
-    void deleteAllById(Iterable<? extends McpProviderPassInfoLogPoId> mcpProviderPasskeyLogIds);
+    void deleteAllById(Iterable<? extends McpProviderPassInfoLogId> mcpProviderPasskeyLogIds);
 
     @Override
-    void deleteById(McpProviderPassInfoLogPoId mcpProviderPasskeyLogId);
+    void deleteById(McpProviderPassInfoLogId mcpProviderPasskeyLogId);
 
     @Override
-    boolean existsById(McpProviderPassInfoLogPoId mcpProviderPasskeyLogId);
+    boolean existsById(McpProviderPassInfoLogId mcpProviderPasskeyLogId);
 
     @Override
-    Optional<McpProviderPassInfoLogPo> findById(McpProviderPassInfoLogPoId mcpProviderPasskeyLogId);
+    Optional<McpProviderPassInfoLogPo> findById(McpProviderPassInfoLogId mcpProviderPasskeyLogId);
 
     @Override
     <S extends McpProviderPassInfoLogPo> S save(S entity);

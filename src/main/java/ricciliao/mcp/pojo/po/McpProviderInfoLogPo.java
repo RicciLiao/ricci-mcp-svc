@@ -12,11 +12,11 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "mcp_provider_info_log", schema = "mcp")
-@IdClass(McpProviderInfoLogPoId.class)
+@Table(name = "mcp_provider_info_log")
+@IdClass(McpProviderInfoLogId.class)
 public class McpProviderInfoLogPo implements LoggerPo {
     @Serial
-    private static final long serialVersionUID = 4911198406548894776L;
+    private static final long serialVersionUID = 2490126725374426060L;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -38,14 +38,20 @@ public class McpProviderInfoLogPo implements LoggerPo {
     @Column(name = "ttl_seconds")
     private Long ttlSeconds;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    @Column(name = "active", nullable = false)
+    private Boolean active;
 
-    @Column(name = "is_static", nullable = false)
-    private Boolean isStatic;
+    @Column(name = "statical", nullable = false)
+    private Boolean statical;
+
+    @Column(name = "created_by", nullable = false)
+    private Long createdBy;
 
     @Column(name = "created_dtm", nullable = false)
     private Instant createdDtm;
+
+    @Column(name = "updated_by", nullable = false)
+    private Long updatedBy;
 
     @Column(name = "updated_dtm", nullable = false)
     private Instant updatedDtm;
@@ -56,6 +62,9 @@ public class McpProviderInfoLogPo implements LoggerPo {
     @Column(name = "action_cd", nullable = false, length = 1)
     private Character actionCd;
 
+    @Column(name = "action_by", nullable = false)
+    private Long actionBy;
+
     public Long getId() {
         return id;
     }
@@ -64,12 +73,10 @@ public class McpProviderInfoLogPo implements LoggerPo {
         this.id = id;
     }
 
-    @Override
     public Instant getActionDtm() {
         return actionDtm;
     }
 
-    @Override
     public void setActionDtm(Instant actionDtm) {
         this.actionDtm = actionDtm;
     }
@@ -106,20 +113,28 @@ public class McpProviderInfoLogPo implements LoggerPo {
         this.ttlSeconds = ttlSeconds;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
-    public Boolean getIsStatic() {
-        return isStatic;
+    public Boolean getStatical() {
+        return statical;
     }
 
-    public void setIsStatic(Boolean isStatic) {
-        this.isStatic = isStatic;
+    public void setStatical(Boolean statical) {
+        this.statical = statical;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
     }
 
     public Instant getCreatedDtm() {
@@ -128,6 +143,14 @@ public class McpProviderInfoLogPo implements LoggerPo {
 
     public void setCreatedDtm(Instant createdDtm) {
         this.createdDtm = createdDtm;
+    }
+
+    public Long getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(Long updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public Instant getUpdatedDtm() {
@@ -146,24 +169,30 @@ public class McpProviderInfoLogPo implements LoggerPo {
         this.version = version;
     }
 
-    @Override
     public Character getActionCd() {
         return actionCd;
     }
 
-    @Override
     public void setActionCd(Character actionCd) {
         this.actionCd = actionCd;
+    }
+
+    public Long getActionBy() {
+        return actionBy;
+    }
+
+    public void setActionBy(Long actionBy) {
+        this.actionBy = actionBy;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof McpProviderInfoLogPo logPo)) return false;
-        return Objects.equals(getId(), logPo.getId()) && Objects.equals(getActionDtm(), logPo.getActionDtm()) && Objects.equals(getConsumer(), logPo.getConsumer()) && Objects.equals(getStore(), logPo.getStore()) && Objects.equals(getProvider(), logPo.getProvider()) && Objects.equals(getTtlSeconds(), logPo.getTtlSeconds()) && Objects.equals(getIsActive(), logPo.getIsActive()) && Objects.equals(getIsStatic(), logPo.getIsStatic()) && Objects.equals(getCreatedDtm(), logPo.getCreatedDtm()) && Objects.equals(getUpdatedDtm(), logPo.getUpdatedDtm()) && Objects.equals(getVersion(), logPo.getVersion()) && Objects.equals(getActionCd(), logPo.getActionCd());
+        return Objects.equals(getId(), logPo.getId()) && Objects.equals(getActionDtm(), logPo.getActionDtm()) && Objects.equals(getConsumer(), logPo.getConsumer()) && Objects.equals(getStore(), logPo.getStore()) && Objects.equals(getProvider(), logPo.getProvider()) && Objects.equals(getTtlSeconds(), logPo.getTtlSeconds()) && Objects.equals(getActive(), logPo.getActive()) && Objects.equals(getStatical(), logPo.getStatical()) && Objects.equals(getCreatedBy(), logPo.getCreatedBy()) && Objects.equals(getCreatedDtm(), logPo.getCreatedDtm()) && Objects.equals(getUpdatedBy(), logPo.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), logPo.getUpdatedDtm()) && Objects.equals(getVersion(), logPo.getVersion()) && Objects.equals(getActionCd(), logPo.getActionCd()) && Objects.equals(getActionBy(), logPo.getActionBy());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getActionDtm(), getConsumer(), getStore(), getProvider(), getTtlSeconds(), getIsActive(), getIsStatic(), getCreatedDtm(), getUpdatedDtm(), getVersion(), getActionCd());
+        return Objects.hash(getId(), getActionDtm(), getConsumer(), getStore(), getProvider(), getTtlSeconds(), getActive(), getStatical(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion(), getActionCd(), getActionBy());
     }
 }

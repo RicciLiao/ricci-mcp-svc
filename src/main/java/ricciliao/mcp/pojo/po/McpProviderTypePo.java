@@ -2,6 +2,8 @@ package ricciliao.mcp.pojo.po;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -12,17 +14,18 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "mcp_provider_pass_info")
-public class McpProviderPassInfoPo implements Serializable {
+@Table(name = "mcp_provider_type")
+public class McpProviderTypePo implements Serializable {
     @Serial
-    private static final long serialVersionUID = -578392035406690095L;
+    private static final long serialVersionUID = 8629695124583621684L;
 
     @Id
-    @Column(name = "provider_info_id", nullable = false)
-    private Long providerInfoId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @Column(name = "pass_key", nullable = false, length = 16)
-    private String passKey;
+    @Column(name = "provider", nullable = false, length = 25)
+    private String provider;
 
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
@@ -40,20 +43,20 @@ public class McpProviderPassInfoPo implements Serializable {
     @Column(name = "version", nullable = false)
     private Instant version;
 
-    public Long getProviderInfoId() {
-        return providerInfoId;
+    public Long getId() {
+        return id;
     }
 
-    public void setProviderInfoId(Long providerInfoId) {
-        this.providerInfoId = providerInfoId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getPassKey() {
-        return passKey;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setPassKey(String passKey) {
-        this.passKey = passKey;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
     public Long getCreatedBy() {
@@ -98,12 +101,12 @@ public class McpProviderPassInfoPo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof McpProviderPassInfoPo po)) return false;
-        return Objects.equals(getProviderInfoId(), po.getProviderInfoId()) && Objects.equals(getPassKey(), po.getPassKey()) && Objects.equals(getCreatedBy(), po.getCreatedBy()) && Objects.equals(getCreatedDtm(), po.getCreatedDtm()) && Objects.equals(getUpdatedBy(), po.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), po.getUpdatedDtm()) && Objects.equals(getVersion(), po.getVersion());
+        if (!(o instanceof McpProviderTypePo that)) return false;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getProvider(), that.getProvider()) && Objects.equals(getCreatedBy(), that.getCreatedBy()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedBy(), that.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getProviderInfoId(), getPassKey(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion());
+        return Objects.hash(getId(), getProvider(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion());
     }
 }

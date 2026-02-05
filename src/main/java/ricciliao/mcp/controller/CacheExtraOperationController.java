@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ricciliao.mcp.service.CacheService;
+import ricciliao.mcp.service.CacheOperationService;
 import ricciliao.x.component.payload.PayloadData;
 import ricciliao.x.component.payload.response.Response;
 import ricciliao.x.component.payload.response.ResponseUtils;
@@ -20,10 +20,10 @@ import ricciliao.x.mcp.annotation.McpIdentifierHeader;
 @RequestMapping("/operation/extra")
 public class CacheExtraOperationController {
 
-    private CacheService cacheService;
+    private CacheOperationService cacheService;
 
     @Autowired
-    public void setCacheService(CacheService cacheService) {
+    public void setCacheService(CacheOperationService cacheService) {
         this.cacheService = cacheService;
     }
 

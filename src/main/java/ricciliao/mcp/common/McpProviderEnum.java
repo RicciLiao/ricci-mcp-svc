@@ -1,24 +1,19 @@
 package ricciliao.mcp.common;
 
 public enum McpProviderEnum {
-    REDIS("redis", 0L),
-    MONGO("mongo", 1L),
+    REDIS("redis"),
+    MONGO("mongo"),
     ;
 
     private final String provider;
-    private final Long identity;
 
 
-    McpProviderEnum(String provider, Long identity) {
+    McpProviderEnum(String provider) {
         this.provider = provider;
-        this.identity = identity;
     }
 
     public String getProvider() {
         return provider;
     }
 
-    public Long getIdentity() {
-        return identity;
-    }
 }

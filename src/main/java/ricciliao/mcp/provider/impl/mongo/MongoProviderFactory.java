@@ -3,7 +3,7 @@ package ricciliao.mcp.provider.impl.mongo;
 import com.mongodb.client.MongoClient;
 import jakarta.annotation.Nonnull;
 import ricciliao.mcp.common.McpProviderEnum;
-import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.properties.MongoProviderProperties;
 import ricciliao.mcp.provider.AbstractMcpProviderFactory;
 
@@ -16,13 +16,13 @@ public class MongoProviderFactory extends AbstractMcpProviderFactory {
     }
 
     @Override
-    protected MongoProvider create(@Nonnull McpProviderInfoPo po) {
+    protected MongoProvider create(@Nonnull McpProviderInfoBo bo) {
         MongoProviderProperties providerProperties = this.getProviderProperties();
-        providerProperties.setUsername(po.getConsumer());
-        providerProperties.setDatabase(po.getConsumer());
-        providerProperties.setPassword(po.getPassInfo().getPassKey().toCharArray());
+        providerProperties.setUsername(bo.getInfo().getConsumer());
+        providerProperties.setDatabase(bo.getInfo().getConsumer());
+        providerProperties.setPassword(bo.getPassInfo().getPassKey().toCharArray());
 
-        return new MongoProvider(po, (MongoClient) super.getClientFactory().create(providerProperties));
+        return new MongoProvider(bo.getInfo(), (MongoClient) super.getClientFactory().create(providerProperties));
     }
 
     @Override

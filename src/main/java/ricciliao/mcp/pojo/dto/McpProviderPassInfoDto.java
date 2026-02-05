@@ -1,43 +1,20 @@
-package ricciliao.mcp.pojo.po;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
+package ricciliao.mcp.pojo.dto;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-@Entity
-@Table(name = "mcp_provider_pass_info")
-public class McpProviderPassInfoPo implements Serializable {
+public class McpProviderPassInfoDto implements Serializable {
     @Serial
-    private static final long serialVersionUID = -578392035406690095L;
+    private static final long serialVersionUID = -7737771839883533097L;
 
-    @Id
-    @Column(name = "provider_info_id", nullable = false)
     private Long providerInfoId;
-
-    @Column(name = "pass_key", nullable = false, length = 16)
     private String passKey;
-
-    @Column(name = "created_by", nullable = false)
     private Long createdBy;
-
-    @Column(name = "created_dtm", nullable = false)
     private Instant createdDtm;
-
-    @Column(name = "updated_by", nullable = false)
     private Long updatedBy;
-
-    @Column(name = "updated_dtm", nullable = false)
     private Instant updatedDtm;
-
-    @Version
-    @Column(name = "version", nullable = false)
     private Instant version;
 
     public Long getProviderInfoId() {
@@ -98,8 +75,8 @@ public class McpProviderPassInfoPo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof McpProviderPassInfoPo po)) return false;
-        return Objects.equals(getProviderInfoId(), po.getProviderInfoId()) && Objects.equals(getPassKey(), po.getPassKey()) && Objects.equals(getCreatedBy(), po.getCreatedBy()) && Objects.equals(getCreatedDtm(), po.getCreatedDtm()) && Objects.equals(getUpdatedBy(), po.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), po.getUpdatedDtm()) && Objects.equals(getVersion(), po.getVersion());
+        if (!(o instanceof McpProviderPassInfoDto that)) return false;
+        return Objects.equals(getProviderInfoId(), that.getProviderInfoId()) && Objects.equals(getPassKey(), that.getPassKey()) && Objects.equals(getCreatedBy(), that.getCreatedBy()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedBy(), that.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion());
     }
 
     @Override

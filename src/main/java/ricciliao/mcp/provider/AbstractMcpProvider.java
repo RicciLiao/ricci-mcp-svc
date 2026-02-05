@@ -24,7 +24,7 @@ public abstract class AbstractMcpProvider implements McpProviderRepository {
 
     protected AbstractMcpProvider(@Nonnull McpProviderInfoPo po) {
         this.identifier = new McpIdentifier(po.getConsumer(), po.getStore());
-        this.ttlSeconds = Boolean.TRUE.equals(po.getIsStatic()) ? Duration.ofSeconds(-1L) : Duration.ofSeconds(po.getTtlSeconds());
+        this.ttlSeconds = Boolean.TRUE.equals(po.getStatical()) ? Duration.ofSeconds(-1L) : Duration.ofSeconds(po.getTtlSeconds());
         Arrays.stream(McpCache.class.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(McpCriteria.Support.class))
                 .forEach(field -> {

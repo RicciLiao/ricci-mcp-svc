@@ -5,7 +5,7 @@ import jakarta.annotation.Nonnull;
 import org.springframework.util.ResourceUtils;
 import redis.clients.jedis.JedisPooled;
 import ricciliao.mcp.common.McpProviderEnum;
-import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.properties.RedisProviderProperties;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.AbstractMcpProviderFactory;
@@ -29,12 +29,14 @@ public class RedisProviderFactory extends AbstractMcpProviderFactory {
     }
 
     @Override
-    protected AbstractMcpProvider create(@Nonnull McpProviderInfoPo po) {
+    protected AbstractMcpProvider create(@Nonnull McpProviderInfoBo bo) {
         RedisProviderProperties providerProperties = this.getProviderProperties();
+        providerProperties.setUsername(bo.getInfo().getConsumer());
+        providerProperties.setPassword(bo.getPassInfo().getPassKey());
 
         return
                 new RedisProvider(
-                        po,
+                        bo.getInfo(),
                         (JedisPooled) this.getClientFactory().create(providerProperties),
                         this.objectMapper,
                         this.upsertLua
@@ -52,4 +54,5 @@ public class RedisProviderFactory extends AbstractMcpProviderFactory {
 
         return (RedisProviderProperties) super.getProviderProperties();
     }
+
 }

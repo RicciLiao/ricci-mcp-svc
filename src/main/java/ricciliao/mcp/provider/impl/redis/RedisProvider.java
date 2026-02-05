@@ -3,6 +3,7 @@ package ricciliao.mcp.provider.impl.redis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import redis.clients.jedis.JedisPooled;
@@ -38,6 +39,7 @@ public class RedisProvider extends AbstractMcpProvider {
     private final ObjectMapper objectMapper;
     private final String upsertScript;
     private final String indexName;
+    private final String keyPrefix;
 
     public RedisProvider(@Nonnull McpProviderInfoPo po,
                          @Nonnull JedisPooled jedisPooled,
@@ -47,7 +49,8 @@ public class RedisProvider extends AbstractMcpProvider {
         this.jedisPooled = jedisPooled;
         this.upsertScript = this.jedisPooled.scriptLoad(upsertScript);
         this.objectMapper = objectMapper;
-        this.indexName = super.getIdentifier() + "_index";
+        this.indexName = RedisHelper.indexName(super.getIdentifier());
+        this.keyPrefix = RedisHelper.keyPrefix(super.getIdentifier());
     }
 
     @Override
@@ -58,7 +61,7 @@ public class RedisProvider extends AbstractMcpProvider {
                     Long.parseLong(
                             this.jedisPooled.evalsha(
                                     this.upsertScript,
-                                    Collections.singletonList(this.buildRedisKey(single.getData().getUid())),
+                                    Collections.singletonList(this.key(single.getData().getUid())),
                                     Arrays.asList(
                                             this.objectMapper.writeValueAsString(single.getData()),
                                             String.valueOf(super.getTtlSeconds().getSeconds()),
@@ -81,7 +84,7 @@ public class RedisProvider extends AbstractMcpProvider {
                     Long.parseLong(
                             this.jedisPooled.evalsha(
                                     this.upsertScript,
-                                    Collections.singletonList(this.buildRedisKey(single.getData().getUid())),
+                                    Collections.singletonList(this.key(single.getData().getUid())),
                                     Arrays.asList(
                                             this.objectMapper.writeValueAsString(single.getData()),
                                             String.valueOf(super.getTtlSeconds().getSeconds()),
@@ -102,7 +105,7 @@ public class RedisProvider extends AbstractMcpProvider {
 
         return AbstractProviderCacheMessage.of(
                 this.objectMapper.convertValue(
-                        this.jedisPooled.jsonGet(this.buildRedisKey(key)),
+                        this.jedisPooled.jsonGet(this.key(key)),
                         ProviderCache.class
                 )
         );
@@ -111,7 +114,7 @@ public class RedisProvider extends AbstractMcpProvider {
     @Override
     public boolean delete(String key) {
 
-        return this.jedisPooled.del(this.buildRedisKey(key)) == 1L;
+        return this.jedisPooled.del(this.key(key)) == 1L;
     }
 
     @Override
@@ -122,7 +125,7 @@ public class RedisProvider extends AbstractMcpProvider {
                 responseList.add(
                         pipeline.evalsha(
                                 this.upsertScript,
-                                Collections.singletonList(this.buildRedisKey(datum.getUid())),
+                                Collections.singletonList(this.key(datum.getUid())),
                                 Arrays.asList(
                                         this.objectMapper.writeValueAsString(datum),
                                         String.valueOf(super.getTtlSeconds().getSeconds()),
@@ -150,7 +153,7 @@ public class RedisProvider extends AbstractMcpProvider {
                 responseList.add(
                         pipeline.evalsha(
                                 this.upsertScript,
-                                Collections.singletonList(this.buildRedisKey(datum.getUid())),
+                                Collections.singletonList(this.key(datum.getUid())),
                                 Arrays.asList(
                                         this.objectMapper.writeValueAsString(datum),
                                         String.valueOf(super.getTtlSeconds().getSeconds()),
@@ -174,8 +177,8 @@ public class RedisProvider extends AbstractMcpProvider {
     @Override
     public AbstractProviderCacheMessage.Batch list(McpQuery query) {
         SearchResult sr = this.jedisPooled.ftSearch(this.indexName, this.toQuery(query));
-        if (sr.getTotalResults() > 0) {
-            ProviderCache[] stores = new ProviderCache[Math.toIntExact(sr.getTotalResults())];
+        if (CollectionUtils.isNotEmpty(sr.getDocuments())) {
+            ProviderCache[] stores = new ProviderCache[Math.toIntExact(sr.getDocuments().size())];
             try {
                 for (int i = 0; i < sr.getDocuments().size(); i++) {
                     stores[i] =
@@ -202,7 +205,7 @@ public class RedisProvider extends AbstractMcpProvider {
             if (ArrayUtils.isNotEmpty(batch.getData())) {
                 this.jedisPooled.del(
                         Arrays.stream(batch.getData())
-                                .map(dto -> this.buildRedisKey(dto.getUid()))
+                                .map(dto -> this.key(dto.getUid()))
                                 .toArray(String[]::new)
                 );
             } else {
@@ -283,14 +286,9 @@ public class RedisProvider extends AbstractMcpProvider {
         return searchQ;
     }
 
-    private String buildRedisKey(String id) {
+    private String key(String id) {
 
-        return String.format(
-                "%s:%s:%s",
-                super.getIdentifier().getConsumer(),
-                super.getIdentifier().getStore(),
-                id.replace("_", ":")
-        );
+        return String.format("%s%s", this.keyPrefix, id);
     }
 
 }
