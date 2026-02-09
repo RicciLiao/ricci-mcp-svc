@@ -246,7 +246,7 @@ public class RedisProvider extends AbstractMcpProvider {
     }
 
     @Override
-    protected void destroy() {
+    public void destroy() {
         this.jedisPooled.close();
     }
 

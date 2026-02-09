@@ -3,7 +3,6 @@ package ricciliao.mcp.provider.impl.redis;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.lang.NonNull;
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisClientConfig;
@@ -17,8 +16,9 @@ import java.util.function.UnaryOperator;
 
 public class RedisClientFactory implements AbstractMcpProviderFactory.ClientFactory {
 
+    @Nonnull
     @Override
-    public JedisPooled create(@NonNull McpProviderProperties providerProperties) {
+    public JedisPooled create(@Nonnull McpProviderProperties providerProperties) {
 
         return new JedisPooled(null, this.clientConfig((RedisProviderProperties) providerProperties, null), this.poolConfig(null));
     }

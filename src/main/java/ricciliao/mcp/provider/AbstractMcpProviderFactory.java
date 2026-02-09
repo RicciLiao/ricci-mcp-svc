@@ -1,16 +1,17 @@
 package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
-import ricciliao.mcp.common.McpProviderEnum;
 import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
+import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.properties.McpProviderProperties;
 import ricciliao.x.component.exception.AbstractException;
 
-public abstract class AbstractMcpProviderFactory {
+public abstract class AbstractMcpProviderFactory implements McpProviderFactory {
 
-    private final McpProviderProperties providerProperties;
-    private final AbstractMcpProviderFactory.ClientFactory clientFactory;
-    private final AbstractMcpProviderLifecycle lifecycle;
+    protected final McpProviderProperties providerProperties;
+    protected final AbstractMcpProviderFactory.ClientFactory clientFactory;
+    protected final AbstractMcpProviderLifecycle lifecycle;
 
     protected AbstractMcpProviderFactory(McpProviderProperties providerProperties,
                                          AbstractMcpProviderFactory.ClientFactory clientFactory,
@@ -20,40 +21,34 @@ public abstract class AbstractMcpProviderFactory {
         this.lifecycle = lifecycle;
     }
 
-    public abstract McpProviderEnum whoAmI();
-
-    protected abstract AbstractMcpProvider create(@Nonnull McpProviderInfoBo po);
-
-    protected void destroy(@Nonnull AbstractMcpProvider provider) {
-        provider.destroy();
-    }
-
-    public McpProviderProperties getProviderProperties() {
-
-        return this.providerProperties.copy();
-    }
-
-    public final AbstractMcpProviderFactory.ClientFactory getClientFactory() {
-
-        return clientFactory;
-    }
-
-    protected final AbstractMcpProvider delegateCreate(@Nonnull McpProviderInfoBo po) throws AbstractException {
-        this.lifecycle.delegatePreCreation(po);
-        AbstractMcpProvider provider = this.create(po);
-        this.lifecycle.delegatePostCreation(provider, po);
+    @Nonnull
+    @Override
+    public AbstractMcpProvider create(@Nonnull McpProviderInfoBo bo) throws AbstractException {
+        this.lifecycle.preCreation(bo);
+        AbstractMcpProvider provider = this.create(bo.getInfo(), bo.getPassInfo());
+        this.lifecycle.postCreation(provider, bo);
 
         return provider;
     }
 
-    protected final void delegateDestroy(@Nonnull McpProviderInfoBo po) {
-        AbstractMcpProvider provider = this.lifecycle.delegatePreDestruction(po);
-        this.destroy(provider);
-        this.lifecycle.delegatePostDestruction(po);
+    @Override
+    public void destroy(@Nonnull McpProviderInfoBo bo) {
+        AbstractMcpProvider provider = this.lifecycle.preDestruction(bo);
+        this.destroy(bo.getInfo(), provider);
+        provider.destroy();
+        this.lifecycle.postDestruction(bo);
     }
 
+    @Nonnull
+    protected abstract AbstractMcpProvider create(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) throws AbstractException;
+
+    protected abstract void destroy(@Nonnull McpProviderInfoPo info, @Nonnull AbstractMcpProvider provider);
+
     public interface ClientFactory {
+
+        @Nonnull
         Object create(@Nonnull McpProviderProperties providerProperties);
+
     }
 
 }

@@ -4,11 +4,11 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import jakarta.annotation.Nonnull;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.autoconfigure.mongo.PropertiesMongoConnectionDetails;
-import org.springframework.lang.NonNull;
 import ricciliao.mcp.pojo.ProviderCache;
 import ricciliao.mcp.properties.McpProviderProperties;
 import ricciliao.mcp.properties.MongoProviderProperties;
@@ -49,8 +49,9 @@ public class MongoClientFactory implements AbstractMcpProviderFactory.ClientFact
         this.sslContext = temp;
     }
 
+    @Nonnull
     @Override
-    public MongoClient create(@NonNull McpProviderProperties providerProperties) {
+    public MongoClient create(@Nonnull McpProviderProperties providerProperties) {
         MongoProperties mongoProperties = ((MongoProviderProperties) providerProperties).createSpringProperties();
         MongoClientSettings settings =
                 MongoClientSettings

@@ -5,7 +5,8 @@ import jakarta.annotation.Nonnull;
 import org.springframework.util.ResourceUtils;
 import redis.clients.jedis.JedisPooled;
 import ricciliao.mcp.common.McpProviderEnum;
-import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
+import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.properties.RedisProviderProperties;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.AbstractMcpProviderFactory;
@@ -25,34 +26,36 @@ public class RedisProviderFactory extends AbstractMcpProviderFactory {
                                 @Nonnull ObjectMapper objectMapper) {
         super(providerProperties, jedisPooledFactory, redisProviderLifecycle);
         this.objectMapper = objectMapper;
-        this.upsertLua = SneakyThrowUtils.get(() -> Files.readString(Paths.get(ResourceUtils.getFile("classpath:redis_upsert.lua").getPath())));
+        this.upsertLua =
+                SneakyThrowUtils.get(() -> Files.readString(Paths.get(ResourceUtils.getFile("classpath:redis_upsert.lua").getPath())));
     }
 
+    @Nonnull
     @Override
-    protected AbstractMcpProvider create(@Nonnull McpProviderInfoBo bo) {
-        RedisProviderProperties providerProperties = this.getProviderProperties();
-        providerProperties.setUsername(bo.getInfo().getConsumer());
-        providerProperties.setPassword(bo.getPassInfo().getPassKey());
+    protected AbstractMcpProvider create(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
+        RedisProviderProperties providerProperties = (RedisProviderProperties) this.providerProperties;
+        providerProperties.setUsername(info.getConsumer());
+        providerProperties.setPassword(passInfo.getPassKey());
 
         return
                 new RedisProvider(
-                        bo.getInfo(),
-                        (JedisPooled) this.getClientFactory().create(providerProperties),
+                        info,
+                        (JedisPooled) this.clientFactory.create(providerProperties),
                         this.objectMapper,
                         this.upsertLua
                 );
     }
 
     @Override
+    protected void destroy(@Nonnull McpProviderInfoPo info, @Nonnull AbstractMcpProvider provider) {
+        //do nothing
+    }
+
+    @Nonnull
+    @Override
     public McpProviderEnum whoAmI() {
 
         return McpProviderEnum.REDIS;
-    }
-
-    @Override
-    public RedisProviderProperties getProviderProperties() {
-
-        return (RedisProviderProperties) super.getProviderProperties();
     }
 
 }

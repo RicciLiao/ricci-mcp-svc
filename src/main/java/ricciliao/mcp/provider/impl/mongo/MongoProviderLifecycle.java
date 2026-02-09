@@ -8,7 +8,8 @@ import jakarta.annotation.Nonnull;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import ricciliao.mcp.pojo.ProviderCache;
-import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
+import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.AbstractMcpProviderLifecycle;
 import ricciliao.mcp.provider.McpProviderRegistry;
@@ -19,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
 
-    private final MongoClient authMongoClient;
     public final String authenticationDatabase;
+    private final MongoClient authMongoClient;
 
     public MongoProviderLifecycle(@Nonnull McpProviderRegistry registry,
                                   @Nonnull MongoClient authMongoClient,
@@ -31,7 +32,7 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
     }
 
     @Override
-    protected void preCreation(@Nonnull McpProviderInfoBo bo) {
+    protected void preCreation(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
         Document document =
                 authMongoClient
                         .getDatabase(authenticationDatabase)
@@ -39,7 +40,7 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
                                 BsonDocument.parse(
                                         String.format(
                                                 "{usersInfo: \"%s\", filter: {roles: [{role: \"readWrite\", db: \"%s\"}]}}",
-                                                bo.getInfo().getConsumer(), bo.getInfo().getConsumer()
+                                                info.getConsumer(), info.getConsumer()
                                         )
                                 )
                         );
@@ -49,14 +50,14 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
                     .runCommand(
                             BsonDocument.parse(String.format(
                                     "{createUser: \"%s\", pwd: \"%s\", roles: [{role: \"readWrite\", db: \"%s\"}]}",
-                                    bo.getInfo().getConsumer(), bo.getPassInfo().getPassKey(), bo.getInfo().getConsumer()
+                                    info.getConsumer(), passInfo.getPassKey(), info.getConsumer()
                             ))
                     );
         }
     }
 
     @Override
-    protected void postCreation(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoBo bo) {
+    protected void postCreation(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
         String ttlIndexName = provider.getIdentifier() + "_ttl_index";
         MongoCollection<ProviderCache> mongoCollection =
                 authMongoClient
@@ -70,7 +71,7 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
                         .filter(index -> ttlIndexName.equalsIgnoreCase(index.getString("name")))
                         .findAny()
                         .isEmpty()
-                        && !Boolean.TRUE.equals(bo.getInfo().getStatical())
+                        && !Boolean.TRUE.equals(info.getStatical())
         ) {
             mongoCollection.createIndex(
                     Indexes.ascending(provider.getPropertyFieldName(McpCriteria.Property.TTL)),
@@ -83,12 +84,12 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
     }
 
     @Override
-    protected void preDestruction(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoBo bo) {
+    protected void preDestruction(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
         //do nothing
     }
 
     @Override
-    protected void postDestruction(@Nonnull McpProviderInfoBo bo) {
+    protected void postDestruction(@Nonnull McpProviderInfoPo info) {
         //do nothing
     }
 }

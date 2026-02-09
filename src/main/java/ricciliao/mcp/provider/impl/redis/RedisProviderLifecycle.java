@@ -1,14 +1,14 @@
 package ricciliao.mcp.provider.impl.redis;
 
 import jakarta.annotation.Nonnull;
-import org.springframework.lang.NonNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.search.IndexDefinition;
 import redis.clients.jedis.search.IndexOptions;
 import redis.clients.jedis.search.Schema;
-import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
+import ricciliao.mcp.pojo.po.McpProviderInfoPo;
+import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.provider.AbstractMcpProvider;
 import ricciliao.mcp.provider.AbstractMcpProviderLifecycle;
 import ricciliao.mcp.provider.McpProviderRegistry;
@@ -19,7 +19,7 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
     private final JedisPooled authJedisPooled;
     private final JedisPool authJedisPool;
 
-    public RedisProviderLifecycle(@NonNull McpProviderRegistry registry,
+    public RedisProviderLifecycle(@Nonnull McpProviderRegistry registry,
                                   @Nonnull JedisPooled authJedisPooled,
                                   @Nonnull JedisPool authJedisPool) {
         super(registry);
@@ -28,14 +28,14 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
     }
 
     @Override
-    protected void preCreation(@NonNull McpProviderInfoBo bo) {
+    protected void preCreation(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
         try (Jedis jedis = authJedisPool.getResource()) {
-            if (!jedis.aclUsers().contains(bo.getInfo().getConsumer())) {
+            if (!jedis.aclUsers().contains(info.getConsumer())) {
                 jedis.aclSetUser(
-                        bo.getInfo().getConsumer(),
+                        info.getConsumer(),
                         "on",
-                        ">" + bo.getPassInfo().getPassKey(),
-                        "~" + RedisHelper.keyPrefix(bo.getInfo().getConsumer(), bo.getInfo().getStore()) + "*",
+                        ">" + passInfo.getPassKey(),
+                        "~" + RedisHelper.keyPrefix(info.getConsumer(), info.getStore()) + "*",
                         "+@all",
                         "-@admin"
                 );
@@ -44,7 +44,7 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
     }
 
     @Override
-    protected void postCreation(@NonNull AbstractMcpProvider provider, @NonNull McpProviderInfoBo bo) {
+    protected void postCreation(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
         String indexName = RedisHelper.indexName(provider.getIdentifier());
         String prefix = RedisHelper.keyPrefix(provider.getIdentifier());
         if (
@@ -75,12 +75,12 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
     }
 
     @Override
-    protected void preDestruction(@NonNull AbstractMcpProvider provider, @NonNull McpProviderInfoBo bo) {
+    protected void preDestruction(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
         //do nothing
     }
 
     @Override
-    protected void postDestruction(@NonNull McpProviderInfoBo bo) {
+    protected void postDestruction(@Nonnull McpProviderInfoPo info) {
         //do nothing
     }
 }

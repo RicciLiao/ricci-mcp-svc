@@ -23,7 +23,7 @@ public class McpProviderFactoryContext {
         }
     }
 
-    public Optional<AbstractMcpProviderFactory> get(@Nonnull McpProviderInfoBo bo) {
+    protected Optional<AbstractMcpProviderFactory> get(@Nonnull McpProviderInfoBo bo) {
 
         return providerFactoryMap
                 .entrySet()
@@ -41,7 +41,7 @@ public class McpProviderFactoryContext {
             throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getInfo().getConsumer(), bo.getInfo().getStore()));
         }
 
-        return factory.get().delegateCreate(bo);
+        return factory.get().create(bo);
     }
 
     public void destroy(@Nonnull McpProviderInfoBo bo) throws AbstractException {
@@ -50,7 +50,7 @@ public class McpProviderFactoryContext {
 
             throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getInfo().getConsumer(), bo.getInfo().getStore()));
         }
-        factory.get().delegateDestroy(bo);
+        factory.get().destroy(bo);
     }
 
 }

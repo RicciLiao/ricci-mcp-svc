@@ -132,7 +132,7 @@ public class MongoProvider extends AbstractMcpProvider {
     }
 
     @Override
-    protected void destroy() {
+    public void destroy() {
         this.mongoClient.close();
     }
 
