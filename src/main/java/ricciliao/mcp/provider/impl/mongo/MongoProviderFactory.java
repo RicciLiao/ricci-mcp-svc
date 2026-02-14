@@ -2,7 +2,7 @@ package ricciliao.mcp.provider.impl.mongo;
 
 import com.mongodb.client.MongoClient;
 import jakarta.annotation.Nonnull;
-import ricciliao.mcp.common.McpProviderEnum;
+import ricciliao.mcp.common.McpProviderTypeEnum;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.properties.MongoProviderProperties;
@@ -36,9 +36,9 @@ public class MongoProviderFactory extends AbstractMcpProviderFactory {
 
     @Nonnull
     @Override
-    public McpProviderEnum whoAmI() {
+    public McpProviderTypeEnum whoAmI() {
 
-        return McpProviderEnum.MONGO;
+        return McpProviderTypeEnum.MONGO;
     }
 
 }

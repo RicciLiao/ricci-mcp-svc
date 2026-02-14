@@ -1,6 +1,6 @@
 package ricciliao.mcp.common;
 
-public enum McpProviderEnum {
+public enum McpProviderTypeEnum {
     REDIS("redis"),
     MONGO("mongo"),
     ;
@@ -8,7 +8,7 @@ public enum McpProviderEnum {
     private final String provider;
 
 
-    McpProviderEnum(String provider) {
+    McpProviderTypeEnum(String provider) {
         this.provider = provider;
     }
 

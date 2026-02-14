@@ -22,6 +22,15 @@ public class McpProviderInfoDto implements Serializable {
     private Instant updatedDtm;
     private Instant version;
     private McpProviderPassInfoDto passInfo;
+    private McpProviderStatusDto status;
+
+    public McpProviderStatusDto getStatus() {
+        return status;
+    }
+
+    public void setStatus(McpProviderStatusDto status) {
+        this.status = status;
+    }
 
     public McpProviderPassInfoDto getPassInfo() {
         return passInfo;

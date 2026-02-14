@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import org.springframework.util.ResourceUtils;
 import redis.clients.jedis.JedisPooled;
-import ricciliao.mcp.common.McpProviderEnum;
+import ricciliao.mcp.common.McpProviderTypeEnum;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.properties.RedisProviderProperties;
@@ -53,9 +53,9 @@ public class RedisProviderFactory extends AbstractMcpProviderFactory {
 
     @Nonnull
     @Override
-    public McpProviderEnum whoAmI() {
+    public McpProviderTypeEnum whoAmI() {
 
-        return McpProviderEnum.REDIS;
+        return McpProviderTypeEnum.REDIS;
     }
 
 }

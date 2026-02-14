@@ -1,7 +1,7 @@
 package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
-import ricciliao.mcp.common.McpProviderEnum;
+import ricciliao.mcp.common.McpProviderTypeEnum;
 import ricciliao.mcp.common.McpSecondaryCodeEnum;
 import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.x.component.exception.AbstractException;
@@ -14,10 +14,10 @@ import java.util.Optional;
 
 public class McpProviderFactoryContext {
 
-    private final Map<McpProviderEnum, AbstractMcpProviderFactory> providerFactoryMap;
+    private final Map<McpProviderTypeEnum, AbstractMcpProviderFactory> providerFactoryMap;
 
     public McpProviderFactoryContext(List<AbstractMcpProviderFactory> providerFactorieList) {
-        this.providerFactoryMap = new EnumMap<>(McpProviderEnum.class);
+        this.providerFactoryMap = new EnumMap<>(McpProviderTypeEnum.class);
         for (AbstractMcpProviderFactory providerFactory : providerFactorieList) {
             providerFactoryMap.put(providerFactory.whoAmI(), providerFactory);
         }

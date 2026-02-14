@@ -37,9 +37,15 @@ ricciliao:
   x:
     common:
       consumer: mcp
+      springdoc:
+        title: MCP
+        description: Multi-Cache Provider
+        summary: 🎖 Inspiration
+        enable: true
+      crypto-password: ${CRYPTO_PWD}
     log:
       executor:
-        enable: false
+        enable: true
 logging:
   level:
     com:

@@ -5,19 +5,18 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ricciliao.mcp.component.McpCacheBatchConverter;
 import ricciliao.mcp.component.McpCacheSingleConverter;
 import ricciliao.mcp.component.McpIdentifierResolver;
+import ricciliao.mcp.component.McpProviderPipeline;
 import ricciliao.mcp.provider.AbstractMcpProviderFactory;
 import ricciliao.mcp.provider.McpProviderFactoryContext;
 import ricciliao.mcp.provider.McpProviderRegistry;
-import ricciliao.x.starter.common.CommonAutoConfiguration;
+import ricciliao.mcp.service.McpProviderInfoService;
 
 import java.util.List;
 
@@ -26,14 +25,14 @@ import java.util.List;
         MongoProviderAutoConfiguration.class,
         RedisProviderAutoConfiguration.class,
 })
-@ComponentScan(
+/*@ComponentScan(
         excludeFilters =
         @ComponentScan.Filter(
                 type = FilterType.ASSIGNABLE_TYPE,
                 classes = {CommonAutoConfiguration.CommonWebMvcConfiguration.class}
         ),
         basePackages = "ricciliao.x.starter.common"
-)
+)*/
 public class McpBeanConfiguration implements WebMvcConfigurer {
 
     private ObjectMapper objectMapper;
@@ -64,6 +63,13 @@ public class McpBeanConfiguration implements WebMvcConfigurer {
     public McpProviderFactoryContext mcpProviderFactoryContext(ObjectProvider<AbstractMcpProviderFactory> provider) {
 
         return new McpProviderFactoryContext(provider.stream().toList());
+    }
+
+    @Bean
+    public McpProviderPipeline mcpProviderPipeline(@Autowired McpProviderInfoService service,
+                                                   @Autowired McpProviderFactoryContext context) {
+
+        return new McpProviderPipeline(service, context);
     }
 
 }

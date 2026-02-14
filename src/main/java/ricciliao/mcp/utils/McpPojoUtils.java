@@ -2,11 +2,15 @@ package ricciliao.mcp.utils;
 
 import ricciliao.mcp.pojo.dto.McpProviderInfoDto;
 import ricciliao.mcp.pojo.dto.McpProviderPassInfoDto;
+import ricciliao.mcp.pojo.dto.McpProviderStatusDto;
 import ricciliao.mcp.pojo.po.McpProviderInfoLogPo;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoLogPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
-import ricciliao.x.component.persistence.LoggerAction;
+import ricciliao.mcp.pojo.po.McpProviderStatusLogPo;
+import ricciliao.mcp.pojo.po.McpProviderStatusPo;
+import ricciliao.x.component.persistence.LogAction;
+import ricciliao.x.component.persistence.ModifiableAction;
 
 public class McpPojoUtils {
 
@@ -14,8 +18,8 @@ public class McpPojoUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static LoggerAction.Dtm<McpProviderInfoLogPo> covert2Po(McpProviderInfoPo po,
-                                                                   LoggerAction.Cd<McpProviderInfoLogPo> actionCd) {
+    public static McpProviderInfoLogPo convert2Po(McpProviderInfoPo po,
+                                                  LogAction.Op<McpProviderInfoLogPo> op) {
         McpProviderInfoLogPo logPo = new McpProviderInfoLogPo();
         logPo.setId(po.getId());
         logPo.setConsumer(po.getConsumer());
@@ -31,11 +35,11 @@ public class McpPojoUtils {
         logPo.setVersion(po.getVersion());
         logPo.setActionBy(po.getUpdatedBy());
 
-        return actionCd.apply(logPo);
+        return op.apply(logPo);
     }
 
-    public static LoggerAction.Dtm<McpProviderPassInfoLogPo> convert2Po(McpProviderPassInfoPo po,
-                                                                        LoggerAction.Cd<McpProviderPassInfoLogPo> actionCd) {
+    public static McpProviderPassInfoLogPo convert2Po(McpProviderPassInfoPo po,
+                                                      LogAction.Op<McpProviderPassInfoLogPo> op) {
         McpProviderPassInfoLogPo logPo = new McpProviderPassInfoLogPo();
         logPo.setProviderInfoId(po.getProviderInfoId());
         logPo.setPassKey(po.getPassKey());
@@ -46,7 +50,7 @@ public class McpPojoUtils {
         logPo.setVersion(po.getVersion());
         logPo.setActionBy(po.getUpdatedBy());
 
-        return actionCd.apply(logPo);
+        return op.apply(logPo);
     }
 
     public static McpProviderInfoDto convert2Dto(McpProviderInfoPo po) {
@@ -80,7 +84,8 @@ public class McpPojoUtils {
         return dto;
     }
 
-    public static McpProviderInfoPo convert2Po(McpProviderInfoDto dto) {
+    public static McpProviderInfoPo convert2Po(McpProviderInfoDto dto,
+                                               ModifiableAction.Op<McpProviderInfoPo> op) {
         McpProviderInfoPo po = new McpProviderInfoPo();
         po.setId(dto.getId());
         po.setConsumer(dto.getConsumer());
@@ -95,20 +100,33 @@ public class McpPojoUtils {
         po.setUpdatedDtm(dto.getUpdatedDtm());
         po.setVersion(dto.getVersion());
 
-        return po;
+        return op.apply(po);
     }
 
-    public static McpProviderPassInfoPo convert2Po(McpProviderPassInfoDto dto) {
-        McpProviderPassInfoPo po = new McpProviderPassInfoPo();
-        po.setProviderInfoId(dto.getProviderInfoId());
-        po.setPassKey(dto.getPassKey());
-        po.setCreatedBy(dto.getCreatedBy());
-        po.setCreatedDtm(dto.getCreatedDtm());
-        po.setUpdatedBy(dto.getUpdatedBy());
-        po.setUpdatedDtm(dto.getUpdatedDtm());
-        po.setVersion(dto.getVersion());
+    public static McpProviderStatusLogPo convert2Po(McpProviderStatusPo po,
+                                                    LogAction.Op<McpProviderStatusLogPo> op) {
+        McpProviderStatusLogPo logPo = new McpProviderStatusLogPo();
+        logPo.setProviderInfoId(po.getProviderInfoId());
+        logPo.setStatus(po.getStatus());
+        logPo.setCreatedBy(po.getCreatedBy());
+        logPo.setCreatedDtm(po.getCreatedDtm());
+        logPo.setUpdatedBy(po.getUpdatedBy());
+        logPo.setUpdatedDtm(po.getUpdatedDtm());
+        logPo.setVersion(po.getVersion());
 
-        return po;
+        return op.apply(logPo);
     }
 
+    public static McpProviderStatusDto convert2Dto(McpProviderStatusPo po) {
+        McpProviderStatusDto dto = new McpProviderStatusDto();
+        dto.setProviderInfoId(po.getProviderInfoId());
+        dto.setStatus(po.getStatus());
+        dto.setCreatedBy(po.getCreatedBy());
+        dto.setCreatedDtm(po.getCreatedDtm());
+        dto.setUpdatedBy(po.getUpdatedBy());
+        dto.setUpdatedDtm(po.getUpdatedDtm());
+        dto.setVersion(po.getVersion());
+
+        return dto;
+    }
 }

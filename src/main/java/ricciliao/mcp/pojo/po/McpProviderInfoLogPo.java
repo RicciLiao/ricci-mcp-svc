@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
-import ricciliao.x.component.persistence.LoggerPo;
+import ricciliao.x.component.persistence.LogPo;
 
 import java.io.Serial;
 import java.time.Instant;
@@ -14,7 +14,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "mcp_provider_info_log")
 @IdClass(McpProviderInfoLogId.class)
-public class McpProviderInfoLogPo implements LoggerPo {
+public class McpProviderInfoLogPo implements LogPo {
     @Serial
     private static final long serialVersionUID = 2490126725374426060L;
 
