@@ -1,12 +1,15 @@
 package ricciliao.mcp.pojo.po;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
 public class McpProviderStatusLogId implements Serializable {
-    private Long providerInfoId;
+    @Serial
+    private static final long serialVersionUID = 4657542533586324830L;
 
+    private Long providerInfoId;
     private Instant actionDtm;
 
     public McpProviderStatusLogId() {

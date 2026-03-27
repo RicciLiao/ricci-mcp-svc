@@ -21,41 +21,41 @@ public class McpProviderInfoPo implements ModifiablePo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "consumer", nullable = false, length = 25)
+    @Column(name = "consumer")
     private String consumer;
 
-    @Column(name = "store", nullable = false, length = 25)
+    @Column(name = "store")
     private String store;
 
-    @Column(name = "provider", nullable = false)
+    @Column(name = "provider")
     private Long provider;
 
     @Column(name = "ttl_seconds")
     private Long ttlSeconds;
 
-    @Column(name = "active", nullable = false)
+    @Column(name = "active")
     private Boolean active;
 
-    @Column(name = "statical", nullable = false)
+    @Column(name = "statical")
     private Boolean statical;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
-    @Column(name = "created_dtm", nullable = false)
+    @Column(name = "created_dtm")
     private Instant createdDtm;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
-    @Column(name = "updated_dtm", nullable = false)
+    @Column(name = "updated_dtm")
     private Instant updatedDtm;
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Instant version;
 
     public Long getId() {

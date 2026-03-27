@@ -2,6 +2,7 @@ package ricciliao.mcp.service.impl;
 
 import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ricciliao.mcp.common.McpSecondaryCodeEnum;
@@ -19,13 +20,13 @@ import ricciliao.mcp.repository.McpProviderStatusRepository;
 import ricciliao.mcp.service.McpProviderInfoService;
 import ricciliao.mcp.utils.McpPojoUtils;
 import ricciliao.x.component.exception.AbstractException;
-import ricciliao.x.component.exception.ConcurrentException;
-import ricciliao.x.component.exception.DuplicateException;
+import ricciliao.x.component.exception.DataException;
 import ricciliao.x.component.persistence.LogAction;
 import ricciliao.x.component.persistence.ModifiableAction;
 import ricciliao.x.component.random.RandomGenerator;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -88,7 +89,7 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         }
         if (Objects.isNull(result.getStatus())) {
             McpProviderStatusPo statusPo = new McpProviderStatusPo();
-            statusPo.setProviderInfoId(result.getStatus().getProviderInfoId());
+            statusPo.setProviderInfoId(id);
             statusPo.setStatus(Boolean.TRUE);
             statusPo.setCreatedBy(0L);
             statusPo.setCreatedDtm(now);
@@ -102,12 +103,22 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         return result;
     }
 
+    @Override
+    public List<McpProviderInfoDto> list() {
+
+        return providerInfoRepository
+                .fullyList()
+                .stream()
+                .map(McpPojoUtils::convert2Dto)
+                .toList();
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long insert(@Nonnull McpProviderInfoDto dto) throws AbstractException {
         if (providerInfoRepository.existsByConsumerAndStore(dto.getConsumer(), dto.getStore())) {
 
-            throw new DuplicateException(McpSecondaryCodeEnum.CONSUMER_STORE_EXISTED.format(dto.getConsumer(), dto.getStore()));
+            throw new DataException(McpSecondaryCodeEnum.CONSUMER_STORE_EXISTED.format(dto.getConsumer(), dto.getStore()));
         }
         Instant now = Instant.now();
         McpProviderInfoPo po = McpPojoUtils.convert2Po(dto, ModifiableAction.insert(now));
@@ -120,9 +131,9 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long update(@Nonnull McpProviderInfoDto dto) throws AbstractException {
-        if (providerInfoRepository.existsById(dto.getId())) {
+        if (!providerInfoRepository.existsById(dto.getId())) {
 
-            throw new ConcurrentException(McpSecondaryCodeEnum.PROVIDER_NOT_FIND.format(dto.getConsumer(), dto.getStore()));
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_NOT_FIND.format(dto.getConsumer(), dto.getStore()));
         }
         Instant now = Instant.now();
         McpProviderInfoPo po = McpPojoUtils.convert2Po(dto, ModifiableAction.update(now));
@@ -150,7 +161,7 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
     public Long delete(@Nonnull McpProviderInfoDto dto) throws AbstractException {
         if (providerInfoRepository.existsById(dto.getId())) {
 
-            throw new ConcurrentException(McpSecondaryCodeEnum.PROVIDER_NOT_FIND.format(dto.getConsumer(), dto.getStore()));
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_NOT_FIND.format(dto.getConsumer(), dto.getStore()));
         }
         Instant now = Instant.now();
         McpProviderInfoPo po = McpPojoUtils.convert2Po(dto, ModifiableAction.delete(now));
@@ -166,6 +177,20 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         }
 
         return 0L;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean upsert(@NonNull List<McpProviderInfoDto> dtoList) throws AbstractException {
+        for (McpProviderInfoDto dto : dtoList) {
+            if(Objects.isNull(dto.getId())) {
+                this.insert(dto);
+            } else {
+                this.update(dto);
+            }
+        }
+
+        return true;
     }
 
 }

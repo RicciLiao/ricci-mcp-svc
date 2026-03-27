@@ -43,7 +43,7 @@ public class MongoClientFactory implements AbstractMcpProviderFactory.ClientFact
                 sc.init(null, trustManagers, null);
                 temp = sc;
             } catch (Exception e) {
-                logger.warn("Failed to connect mongo by SSL!", e);
+                logger.warn("Failed to connect mongo by SSL! Try to by pass...");
             }
         }
         this.sslContext = temp;

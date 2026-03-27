@@ -12,32 +12,31 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-@Table(name = "mcp_provider_status", schema = "mcp")
+@Table(name = "mcp_provider_status")
 public class McpProviderStatusPo implements ModifiablePo {
     @Serial
     private static final long serialVersionUID = -8464410183770097779L;
 
     @Id
-    @Column(name = "provider_info_id", nullable = false)
     private Long providerInfoId;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Boolean status;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
-    @Column(name = "created_dtm", nullable = false)
+    @Column(name = "created_dtm")
     private Instant createdDtm;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
-    @Column(name = "updated_dtm", nullable = false)
+    @Column(name = "updated_dtm")
     private Instant updatedDtm;
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Instant version;
 
     public Long getProviderInfoId() {

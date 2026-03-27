@@ -9,44 +9,45 @@ import ricciliao.x.component.persistence.LogPo;
 
 import java.io.Serial;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
-@Table(name = "mcp_provider_status_log", schema = "mcp")
+@Table(name = "mcp_provider_status_log")
 @IdClass(McpProviderStatusLogId.class)
 public class McpProviderStatusLogPo implements LogPo {
     @Serial
     private static final long serialVersionUID = 8255375866474570315L;
 
     @Id
-    @Column(name = "provider_info_id", nullable = false)
+    @Column(name = "provider_info_id")
     private Long providerInfoId;
 
     @Id
-    @Column(name = "action_dtm", nullable = false)
+    @Column(name = "action_dtm")
     private Instant actionDtm;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Boolean status;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
-    @Column(name = "created_dtm", nullable = false)
+    @Column(name = "created_dtm")
     private Instant createdDtm;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
-    @Column(name = "updated_dtm", nullable = false)
+    @Column(name = "updated_dtm")
     private Instant updatedDtm;
 
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Instant version;
 
-    @Column(name = "action_cd", nullable = false, length = 1)
+    @Column(name = "action_cd")
     private Character actionCd;
 
-    @Column(name = "action_by", nullable = false)
+    @Column(name = "action_by")
     private Long actionBy;
 
     public Long getProviderInfoId() {
@@ -129,4 +130,14 @@ public class McpProviderStatusLogPo implements LogPo {
         this.actionBy = actionBy;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof McpProviderStatusLogPo that)) return false;
+        return Objects.equals(getProviderInfoId(), that.getProviderInfoId()) && Objects.equals(getActionDtm(), that.getActionDtm()) && Objects.equals(getStatus(), that.getStatus()) && Objects.equals(getCreatedBy(), that.getCreatedBy()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedBy(), that.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion()) && Objects.equals(getActionCd(), that.getActionCd()) && Objects.equals(getActionBy(), that.getActionBy());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProviderInfoId(), getActionDtm(), getStatus(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion(), getActionCd(), getActionBy());
+    }
 }

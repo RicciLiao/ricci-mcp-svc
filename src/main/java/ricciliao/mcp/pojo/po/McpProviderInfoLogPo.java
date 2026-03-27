@@ -19,50 +19,50 @@ public class McpProviderInfoLogPo implements LogPo {
     private static final long serialVersionUID = 2490126725374426060L;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @Id
-    @Column(name = "action_dtm", nullable = false)
+    @Column(name = "action_dtm")
     private Instant actionDtm;
 
-    @Column(name = "consumer", nullable = false, length = 25)
+    @Column(name = "consumer")
     private String consumer;
 
-    @Column(name = "store", nullable = false, length = 25)
+    @Column(name = "store")
     private String store;
 
-    @Column(name = "provider", nullable = false)
+    @Column(name = "provider")
     private Long provider;
 
     @Column(name = "ttl_seconds")
     private Long ttlSeconds;
 
-    @Column(name = "active", nullable = false)
+    @Column(name = "active")
     private Boolean active;
 
-    @Column(name = "statical", nullable = false)
+    @Column(name = "statical")
     private Boolean statical;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
-    @Column(name = "created_dtm", nullable = false)
+    @Column(name = "created_dtm")
     private Instant createdDtm;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
-    @Column(name = "updated_dtm", nullable = false)
+    @Column(name = "updated_dtm")
     private Instant updatedDtm;
 
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Instant version;
 
-    @Column(name = "action_cd", nullable = false, length = 1)
+    @Column(name = "action_cd", length = 1)
     private Character actionCd;
 
-    @Column(name = "action_by", nullable = false)
+    @Column(name = "action_by")
     private Long actionBy;
 
     public Long getId() {

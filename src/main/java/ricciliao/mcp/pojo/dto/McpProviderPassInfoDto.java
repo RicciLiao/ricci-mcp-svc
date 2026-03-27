@@ -1,5 +1,7 @@
 package ricciliao.mcp.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -10,6 +12,7 @@ public class McpProviderPassInfoDto implements Serializable {
     private static final long serialVersionUID = -7737771839883533097L;
 
     private Long providerInfoId;
+    @JsonIgnore
     private String passKey;
     private Long createdBy;
     private Instant createdDtm;

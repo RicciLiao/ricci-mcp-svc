@@ -18,26 +18,26 @@ public class McpProviderPassInfoPo implements Serializable {
     private static final long serialVersionUID = -578392035406690095L;
 
     @Id
-    @Column(name = "provider_info_id", nullable = false)
+    @Column(name = "provider_info_id")
     private Long providerInfoId;
 
-    @Column(name = "pass_key", nullable = false, length = 16)
+    @Column(name = "pass_key")
     private String passKey;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
-    @Column(name = "created_dtm", nullable = false)
+    @Column(name = "created_dtm")
     private Instant createdDtm;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
-    @Column(name = "updated_dtm", nullable = false)
+    @Column(name = "updated_dtm")
     private Instant updatedDtm;
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Instant version;
 
     public Long getProviderInfoId() {

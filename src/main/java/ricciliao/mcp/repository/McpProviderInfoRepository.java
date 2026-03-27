@@ -118,4 +118,11 @@ public interface McpProviderInfoRepository extends JpaRepository<McpProviderInfo
             "left join McpProviderStatusPo status on status.providerInfoId = po.id " +
             "where po.id = :id ")
     McpProviderInfoBo fullyGet(@Param("id") Long id);
+
+    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_, status) " +
+            "from McpProviderInfoPo po " +
+            "inner join McpProviderTypePo type_ on type_.id = po.provider " +
+            "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id " +
+            "left join McpProviderStatusPo status on status.providerInfoId = po.id ")
+    List<McpProviderInfoBo> fullyList();
 }

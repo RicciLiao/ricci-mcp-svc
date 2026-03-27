@@ -5,6 +5,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -25,14 +26,7 @@ import java.util.List;
         MongoProviderAutoConfiguration.class,
         RedisProviderAutoConfiguration.class,
 })
-/*@ComponentScan(
-        excludeFilters =
-        @ComponentScan.Filter(
-                type = FilterType.ASSIGNABLE_TYPE,
-                classes = {CommonAutoConfiguration.CommonWebMvcConfiguration.class}
-        ),
-        basePackages = "ricciliao.x.starter.common"
-)*/
+@ComponentScan(basePackages = "ricciliao.x.starter.common")
 public class McpBeanConfiguration implements WebMvcConfigurer {
 
     private ObjectMapper objectMapper;

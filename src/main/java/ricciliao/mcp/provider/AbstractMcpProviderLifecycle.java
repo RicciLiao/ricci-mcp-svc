@@ -1,12 +1,12 @@
 package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
+import ricciliao.mcp.common.McpSecondaryCodeEnum;
 import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.x.component.exception.AbstractException;
-import ricciliao.x.component.exception.DuplicateException;
-import ricciliao.x.component.payload.response.code.impl.SecondaryCodeEnum;
+import ricciliao.x.component.exception.DataException;
 import ricciliao.x.mcp.McpIdentifier;
 
 public abstract class AbstractMcpProviderLifecycle implements McpProviderLifecycle {
@@ -29,7 +29,7 @@ public abstract class AbstractMcpProviderLifecycle implements McpProviderLifecyc
     public void preCreation(@Nonnull McpProviderInfoBo bo) throws AbstractException {
         if (Boolean.TRUE.equals(this.registry.exists(new McpIdentifier(bo.getInfo().getConsumer(), bo.getInfo().getStore())))) {
 
-            throw new DuplicateException(SecondaryCodeEnum.BLANK);
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_EXISTED);
         }
         this.preCreation(bo.getInfo(), bo.getPassInfo());
     }

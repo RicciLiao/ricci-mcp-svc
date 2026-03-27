@@ -42,7 +42,6 @@ ricciliao:
         description: Multi-Cache Provider
         summary: 🎖 Inspiration
         enable: true
-      crypto-password: ${CRYPTO_PWD}
     log:
       executor:
         enable: true

@@ -19,35 +19,35 @@ public class McpProviderPassInfoLogPo implements LogPo {
     private static final long serialVersionUID = 1082445160336480679L;
 
     @Id
-    @Column(name = "provider_info_id", nullable = false)
+    @Column(name = "provider_info_id")
     private Long providerInfoId;
 
     @Id
-    @Column(name = "action_dtm", nullable = false)
+    @Column(name = "action_dtm")
     private Instant actionDtm;
 
-    @Column(name = "pass_key", nullable = false, length = 16)
+    @Column(name = "pass_key")
     private String passKey;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
-    @Column(name = "created_dtm", nullable = false)
+    @Column(name = "created_dtm")
     private Instant createdDtm;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
-    @Column(name = "updated_dtm", nullable = false)
+    @Column(name = "updated_dtm")
     private Instant updatedDtm;
 
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Instant version;
 
-    @Column(name = "action_cd", nullable = false, length = 1)
+    @Column(name = "action_cd")
     private Character actionCd;
 
-    @Column(name = "action_by", nullable = false)
+    @Column(name = "action_by")
     private Long actionBy;
 
     public Long getProviderInfoId() {

@@ -35,6 +35,22 @@ public class McpProviderPipeline {
                 return true;
             }
         }),
+        UPDATE(new Function<>() {
+            @Transactional(rollbackFor = Exception.class)
+            @Override
+            public Boolean apply(McpProviderInfoDto mcpProviderInfoDto) {
+
+                return false;
+            }
+        }),
+        UPSERT(new Function<>() {
+            @Transactional(rollbackFor = Exception.class)
+            @Override
+            public Boolean apply(McpProviderInfoDto mcpProviderInfoDto) {
+
+                return false;
+            }
+        }),
         ;
 
         final Function<McpProviderInfoDto, Boolean> processor;
@@ -43,6 +59,11 @@ public class McpProviderPipeline {
 
         Action(Function<McpProviderInfoDto, Boolean> processor) {
             this.processor = processor;
+        }
+
+        public boolean apply(McpProviderInfoDto dto) {
+
+            return this.processor.apply(dto);
         }
 
         private static void setSuppliers(Supplier<McpProviderInfoService> service,

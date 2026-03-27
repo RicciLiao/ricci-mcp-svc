@@ -3,10 +3,12 @@ package ricciliao.mcp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ricciliao.mcp.component.McpProviderPipeline;
 import ricciliao.mcp.pojo.dto.McpProviderInfoDto;
 import ricciliao.mcp.service.McpProviderInfoService;
 import ricciliao.x.component.exception.AbstractException;
@@ -30,9 +32,22 @@ public class ProviderController {
     @Operation(description = "Create provider")
     @PostMapping("")
     public Response<PayloadData> create(@RequestBody McpProviderInfoDto providerInfo) throws AbstractException {
-        Long id = providerService.insert(providerInfo);
 
-        return ResponseUtils.success(SimplePayloadData.of(id.toString()));
+        return ResponseUtils.success(SimplePayloadData.of(McpProviderPipeline.Action.CREATE.apply(providerInfo)));
+    }
+
+    @Operation(description = "Create providers")
+    @PostMapping("/upsert")
+    public Response<PayloadData> upsert(@RequestBody SimplePayloadData.Collection<McpProviderInfoDto> providerInfoList) throws AbstractException {
+
+        return ResponseUtils.success(SimplePayloadData.of(providerService.upsert(providerInfoList.data())));
+    }
+
+    @Operation(description = "List provider(s)")
+    @GetMapping("/list")
+    public Response<PayloadData> list() throws AbstractException {
+
+        return ResponseUtils.success(SimplePayloadData.of(providerService.list()));
     }
 
 }

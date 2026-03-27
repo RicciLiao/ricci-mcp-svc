@@ -1,5 +1,6 @@
 package ricciliao.mcp.utils;
 
+import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.pojo.dto.McpProviderInfoDto;
 import ricciliao.mcp.pojo.dto.McpProviderPassInfoDto;
 import ricciliao.mcp.pojo.dto.McpProviderStatusDto;
@@ -11,6 +12,8 @@ import ricciliao.mcp.pojo.po.McpProviderStatusLogPo;
 import ricciliao.mcp.pojo.po.McpProviderStatusPo;
 import ricciliao.x.component.persistence.LogAction;
 import ricciliao.x.component.persistence.ModifiableAction;
+
+import java.util.Objects;
 
 public class McpPojoUtils {
 
@@ -113,6 +116,7 @@ public class McpPojoUtils {
         logPo.setUpdatedBy(po.getUpdatedBy());
         logPo.setUpdatedDtm(po.getUpdatedDtm());
         logPo.setVersion(po.getVersion());
+        logPo.setActionBy(po.getUpdatedBy());
 
         return op.apply(logPo);
     }
@@ -129,4 +133,13 @@ public class McpPojoUtils {
 
         return dto;
     }
+
+    public static McpProviderInfoDto convert2Dto(McpProviderInfoBo bo) {
+        McpProviderInfoDto dto = convert2Dto(bo.getInfo());
+        dto.setStatus(Objects.isNull(bo.getStatus()) ? null : convert2Dto(bo.getStatus()));
+        dto.setPassInfo(Objects.isNull(bo.getPassInfo()) ? null : convert2Dto(bo.getPassInfo()));
+
+        return dto;
+    }
+
 }
