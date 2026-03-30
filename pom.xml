@@ -15,7 +15,7 @@
     <description>Multi-Cache Provider Service</description>
 
     <properties>
-
+        <sonar.cpd.exclusions>**/pojo/**</sonar.cpd.exclusions>
     </properties>
 
     <dependencies>
