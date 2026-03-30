@@ -7,6 +7,8 @@ import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
 import ricciliao.mcp.properties.McpProviderProperties;
 import ricciliao.x.component.exception.AbstractException;
 
+import java.util.Objects;
+
 public abstract class AbstractMcpProviderFactory implements McpProviderFactory {
 
     protected final McpProviderProperties providerProperties;
@@ -34,6 +36,10 @@ public abstract class AbstractMcpProviderFactory implements McpProviderFactory {
     @Override
     public void destroy(@Nonnull McpProviderInfoBo bo) {
         AbstractMcpProvider provider = this.lifecycle.preDestruction(bo);
+        if (Objects.isNull(provider)) {
+
+            return;
+        }
         this.destroy(bo.getInfo(), provider);
         provider.destroy();
         this.lifecycle.postDestruction(bo);

@@ -6,7 +6,7 @@ create table mcp_provider_pass_info_log
     created_dtm      datetime(6) not null,
     updated_by bigint not null,
     updated_dtm      datetime(6) not null,
-    version          datetime(6) not null,
+    version          bigint not null,
     action_cd        varchar(1)  not null comment 'I: Insert| U: Update| D: Delete',
     action_dtm       datetime(6) not null,
     action_by  bigint not null,

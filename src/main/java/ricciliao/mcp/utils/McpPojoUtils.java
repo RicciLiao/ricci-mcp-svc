@@ -3,13 +3,10 @@ package ricciliao.mcp.utils;
 import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.pojo.dto.McpProviderInfoDto;
 import ricciliao.mcp.pojo.dto.McpProviderPassInfoDto;
-import ricciliao.mcp.pojo.dto.McpProviderStatusDto;
 import ricciliao.mcp.pojo.po.McpProviderInfoLogPo;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoLogPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
-import ricciliao.mcp.pojo.po.McpProviderStatusLogPo;
-import ricciliao.mcp.pojo.po.McpProviderStatusPo;
 import ricciliao.x.component.persistence.LogAction;
 import ricciliao.x.component.persistence.ModifiableAction;
 
@@ -106,37 +103,8 @@ public class McpPojoUtils {
         return op.apply(po);
     }
 
-    public static McpProviderStatusLogPo convert2Po(McpProviderStatusPo po,
-                                                    LogAction.Op<McpProviderStatusLogPo> op) {
-        McpProviderStatusLogPo logPo = new McpProviderStatusLogPo();
-        logPo.setProviderInfoId(po.getProviderInfoId());
-        logPo.setStatus(po.getStatus());
-        logPo.setCreatedBy(po.getCreatedBy());
-        logPo.setCreatedDtm(po.getCreatedDtm());
-        logPo.setUpdatedBy(po.getUpdatedBy());
-        logPo.setUpdatedDtm(po.getUpdatedDtm());
-        logPo.setVersion(po.getVersion());
-        logPo.setActionBy(po.getUpdatedBy());
-
-        return op.apply(logPo);
-    }
-
-    public static McpProviderStatusDto convert2Dto(McpProviderStatusPo po) {
-        McpProviderStatusDto dto = new McpProviderStatusDto();
-        dto.setProviderInfoId(po.getProviderInfoId());
-        dto.setStatus(po.getStatus());
-        dto.setCreatedBy(po.getCreatedBy());
-        dto.setCreatedDtm(po.getCreatedDtm());
-        dto.setUpdatedBy(po.getUpdatedBy());
-        dto.setUpdatedDtm(po.getUpdatedDtm());
-        dto.setVersion(po.getVersion());
-
-        return dto;
-    }
-
     public static McpProviderInfoDto convert2Dto(McpProviderInfoBo bo) {
         McpProviderInfoDto dto = convert2Dto(bo.getInfo());
-        dto.setStatus(Objects.isNull(bo.getStatus()) ? null : convert2Dto(bo.getStatus()));
         dto.setPassInfo(Objects.isNull(bo.getPassInfo()) ? null : convert2Dto(bo.getPassInfo()));
 
         return dto;

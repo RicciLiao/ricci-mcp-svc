@@ -38,7 +38,7 @@ public class McpProviderPassInfoPo implements Serializable {
 
     @Version
     @Column(name = "version")
-    private Instant version;
+    private Long version;
 
     public Long getProviderInfoId() {
         return providerInfoId;
@@ -88,11 +88,11 @@ public class McpProviderPassInfoPo implements Serializable {
         this.updatedDtm = updatedDtm;
     }
 
-    public Instant getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Instant version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 

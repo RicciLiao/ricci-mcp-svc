@@ -56,7 +56,7 @@ public class McpProviderInfoPo implements ModifiablePo {
 
     @Version
     @Column(name = "version")
-    private Instant version;
+    private Long version;
 
     public Long getId() {
         return id;
@@ -146,11 +146,11 @@ public class McpProviderInfoPo implements ModifiablePo {
         this.updatedDtm = updatedDtm;
     }
 
-    public Instant getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Instant version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 

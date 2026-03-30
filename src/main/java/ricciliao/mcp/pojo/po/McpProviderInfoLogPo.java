@@ -57,7 +57,7 @@ public class McpProviderInfoLogPo implements LogPo {
     private Instant updatedDtm;
 
     @Column(name = "version")
-    private Instant version;
+    private Long version;
 
     @Column(name = "action_cd", length = 1)
     private Character actionCd;
@@ -161,11 +161,11 @@ public class McpProviderInfoLogPo implements LogPo {
         this.updatedDtm = updatedDtm;
     }
 
-    public Instant getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Instant version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 

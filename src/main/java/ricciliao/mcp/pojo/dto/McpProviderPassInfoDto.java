@@ -18,7 +18,7 @@ public class McpProviderPassInfoDto implements Serializable {
     private Instant createdDtm;
     private Long updatedBy;
     private Instant updatedDtm;
-    private Instant version;
+    private Long version;
 
     public Long getProviderInfoId() {
         return providerInfoId;
@@ -68,11 +68,11 @@ public class McpProviderPassInfoDto implements Serializable {
         this.updatedDtm = updatedDtm;
     }
 
-    public Instant getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Instant version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 

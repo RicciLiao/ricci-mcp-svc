@@ -6,7 +6,7 @@ create table mcp_provider_pass_info
     created_dtm      datetime(6) not null,
     updated_by bigint not null,
     updated_dtm      datetime(6) not null,
-    version          datetime(6) not null
+    version          bigint not null
 );
 
 -- //@UNDO

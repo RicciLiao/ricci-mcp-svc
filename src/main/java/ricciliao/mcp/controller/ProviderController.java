@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ricciliao.mcp.component.McpProviderPipeline;
 import ricciliao.mcp.pojo.dto.McpProviderInfoDto;
 import ricciliao.mcp.service.McpProviderInfoService;
+import ricciliao.mcp.service.McpProviderPipeline;
+import ricciliao.mcp.utils.McpPojoUtils;
 import ricciliao.x.component.exception.AbstractException;
 import ricciliao.x.component.payload.PayloadData;
 import ricciliao.x.component.payload.SimplePayloadData;
@@ -23,31 +24,38 @@ import ricciliao.x.component.payload.response.ResponseUtils;
 public class ProviderController {
 
     private McpProviderInfoService providerService;
+    private McpProviderPipeline providerPipeline;
 
     @Autowired
     public void setProviderService(McpProviderInfoService providerService) {
         this.providerService = providerService;
     }
 
-    @Operation(description = "Create provider")
-    @PostMapping("")
-    public Response<PayloadData> create(@RequestBody McpProviderInfoDto providerInfo) throws AbstractException {
-
-        return ResponseUtils.success(SimplePayloadData.of(McpProviderPipeline.Action.CREATE.apply(providerInfo)));
+    @Autowired
+    public void setProviderPipeline(McpProviderPipeline providerPipeline) {
+        this.providerPipeline = providerPipeline;
     }
 
     @Operation(description = "Create providers")
     @PostMapping("/upsert")
     public Response<PayloadData> upsert(@RequestBody SimplePayloadData.Collection<McpProviderInfoDto> providerInfoList) throws AbstractException {
 
-        return ResponseUtils.success(SimplePayloadData.of(providerService.upsert(providerInfoList.data())));
+        return ResponseUtils.success(SimplePayloadData.of(providerPipeline.batch(providerInfoList.data())));
     }
 
     @Operation(description = "List provider(s)")
     @GetMapping("/list")
-    public Response<PayloadData> list() throws AbstractException {
+    public Response<PayloadData> list() {
 
-        return ResponseUtils.success(SimplePayloadData.of(providerService.list()));
+        return ResponseUtils.success(
+                SimplePayloadData.of(
+                        providerService
+                                .fullyList()
+                                .stream()
+                                .map(bo -> McpPojoUtils.convert2Dto(bo.getInfo()))
+                                .toList()
+                )
+        );
     }
 
 }

@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface McpProviderInfoService extends CurdService<McpProviderInfoDto> {
 
-    McpProviderInfoBo pipelinePreStartup(Long id);
+    McpProviderInfoBo fullyGet(Long id);
 
-    List<McpProviderInfoDto> list();
+    List<McpProviderInfoBo> fullyList();
 
 }

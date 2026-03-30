@@ -1,6 +1,7 @@
 package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import ricciliao.mcp.common.McpSecondaryCodeEnum;
 import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
@@ -40,10 +41,14 @@ public abstract class AbstractMcpProviderLifecycle implements McpProviderLifecyc
         this.registry.register(provider, bo.getInfo().getStatical());
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public AbstractMcpProvider preDestruction(@Nonnull McpProviderInfoBo bo) {
         McpIdentifier identifier = new McpIdentifier(bo.getInfo().getConsumer(), bo.getInfo().getStore());
+        if (!Boolean.TRUE.equals(this.registry.exists(identifier))) {
+
+            return null;
+        }
         AbstractMcpProvider provider = this.registry.get(identifier);
         this.registry.unregister(identifier);
         this.preDestruction(provider, bo.getInfo());

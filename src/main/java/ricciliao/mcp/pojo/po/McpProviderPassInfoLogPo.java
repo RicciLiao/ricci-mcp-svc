@@ -42,7 +42,7 @@ public class McpProviderPassInfoLogPo implements LogPo {
     private Instant updatedDtm;
 
     @Column(name = "version")
-    private Instant version;
+    private Long version;
 
     @Column(name = "action_cd")
     private Character actionCd;
@@ -106,11 +106,11 @@ public class McpProviderPassInfoLogPo implements LogPo {
         this.updatedDtm = updatedDtm;
     }
 
-    public Instant getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Instant version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 

@@ -10,13 +10,10 @@ import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.mcp.pojo.dto.McpProviderInfoDto;
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
-import ricciliao.mcp.pojo.po.McpProviderStatusPo;
 import ricciliao.mcp.repository.McpProviderInfoLogRepository;
 import ricciliao.mcp.repository.McpProviderInfoRepository;
 import ricciliao.mcp.repository.McpProviderPassInfoLogRepository;
 import ricciliao.mcp.repository.McpProviderPassInfoRepository;
-import ricciliao.mcp.repository.McpProviderStatusLogRepository;
-import ricciliao.mcp.repository.McpProviderStatusRepository;
 import ricciliao.mcp.service.McpProviderInfoService;
 import ricciliao.mcp.utils.McpPojoUtils;
 import ricciliao.x.component.exception.AbstractException;
@@ -37,18 +34,6 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
     private McpProviderInfoLogRepository providerInfoLogRepository;
     private McpProviderPassInfoRepository providerPassInfoRepository;
     private McpProviderPassInfoLogRepository providerPassInfoLogRepository;
-    private McpProviderStatusRepository providerStatusRepository;
-    private McpProviderStatusLogRepository providerStatusLogRepository;
-
-    @Autowired
-    public void setProviderStatusRepository(McpProviderStatusRepository providerStatusRepository) {
-        this.providerStatusRepository = providerStatusRepository;
-    }
-
-    @Autowired
-    public void setProviderStatusLogRepository(McpProviderStatusLogRepository providerStatusLogRepository) {
-        this.providerStatusLogRepository = providerStatusLogRepository;
-    }
 
     @Autowired
     public void setProviderPassInfoRepository(McpProviderPassInfoRepository providerPassInfoRepository) {
@@ -70,47 +55,16 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         this.providerInfoRepository = providerInfoRepository;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public McpProviderInfoBo pipelinePreStartup(Long id) {
-        Instant now = Instant.now();
-        McpProviderInfoBo result = providerInfoRepository.fullyGet(id);
-        if (Objects.isNull(result.getPassInfo())) {
-            McpProviderPassInfoPo passInfoPo = new McpProviderPassInfoPo();
-            passInfoPo.setProviderInfoId(result.getInfo().getId());
-            passInfoPo.setPassKey(RandomGenerator.nextString(16).generate());
-            passInfoPo.setCreatedBy(0L);
-            passInfoPo.setCreatedDtm(now);
-            passInfoPo.setUpdatedBy(0L);
-            passInfoPo.setUpdatedDtm(now);
-            passInfoPo = providerPassInfoRepository.saveAndFlush(passInfoPo);
-            providerPassInfoLogRepository.save(McpPojoUtils.convert2Po(passInfoPo, LogAction.insert(now)));
-            result.setPassInfo(passInfoPo);
-        }
-        if (Objects.isNull(result.getStatus())) {
-            McpProviderStatusPo statusPo = new McpProviderStatusPo();
-            statusPo.setProviderInfoId(id);
-            statusPo.setStatus(Boolean.TRUE);
-            statusPo.setCreatedBy(0L);
-            statusPo.setCreatedDtm(now);
-            statusPo.setUpdatedBy(0L);
-            statusPo.setUpdatedDtm(now);
-            statusPo = providerStatusRepository.saveAndFlush(statusPo);
-            providerStatusLogRepository.save(McpPojoUtils.convert2Po(statusPo, LogAction.insert(now)));
-            result.setStatus(statusPo);
-        }
+    public McpProviderInfoBo fullyGet(Long id) {
 
-        return result;
+        return providerInfoRepository.fullyGet(id);
     }
 
     @Override
-    public List<McpProviderInfoDto> list() {
+    public List<McpProviderInfoBo> fullyList() {
 
-        return providerInfoRepository
-                .fullyList()
-                .stream()
-                .map(McpPojoUtils::convert2Dto)
-                .toList();
+        return providerInfoRepository.fullyList();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -124,6 +78,16 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         McpProviderInfoPo po = McpPojoUtils.convert2Po(dto, ModifiableAction.insert(now));
         po = providerInfoRepository.saveAndFlush(po);
         providerInfoLogRepository.save(McpPojoUtils.convert2Po(po, LogAction.insert(now)));
+        //Pass Info
+        McpProviderPassInfoPo passInfoPo = new McpProviderPassInfoPo();
+        passInfoPo.setProviderInfoId(po.getId());
+        passInfoPo.setPassKey(RandomGenerator.nextString(16).generate());
+        passInfoPo.setCreatedBy(po.getCreatedBy());
+        passInfoPo.setCreatedDtm(now);
+        passInfoPo.setUpdatedBy(po.getUpdatedBy());
+        passInfoPo.setUpdatedDtm(now);
+        passInfoPo = providerPassInfoRepository.saveAndFlush(passInfoPo);
+        providerPassInfoLogRepository.save(McpPojoUtils.convert2Po(passInfoPo, LogAction.insert(now)));
 
         return po.getId();
     }
@@ -140,7 +104,7 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         po = providerInfoRepository.saveAndFlush(po);
         providerInfoLogRepository.save(McpPojoUtils.convert2Po(po, LogAction.update(now)));
 
-        return 0L;
+        return po.getId();
     }
 
     @Override
@@ -150,16 +114,14 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
 
             return null;
         }
-        McpProviderInfoDto result = McpPojoUtils.convert2Dto(bo.getInfo());
-        result.setStatus(McpPojoUtils.convert2Dto(bo.getStatus()));
 
-        return result;
+        return McpPojoUtils.convert2Dto(bo.getInfo());
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long delete(@Nonnull McpProviderInfoDto dto) throws AbstractException {
-        if (providerInfoRepository.existsById(dto.getId())) {
+        if (!providerInfoRepository.existsById(dto.getId())) {
 
             throw new DataException(McpSecondaryCodeEnum.PROVIDER_NOT_FIND.format(dto.getConsumer(), dto.getStore()));
         }
@@ -176,14 +138,16 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
             providerPassInfoLogRepository.save(McpPojoUtils.convert2Po(passInfoPo, LogAction.delete(now)));
         }
 
-        return 0L;
+        return po.getId();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean upsert(@NonNull List<McpProviderInfoDto> dtoList) throws AbstractException {
         for (McpProviderInfoDto dto : dtoList) {
-            if(Objects.isNull(dto.getId())) {
+            if (Boolean.TRUE.equals(dto.getDeleted())) {
+                this.delete(dto);
+            } else if (Objects.isNull(dto.getId())) {
                 this.insert(dto);
             } else {
                 this.update(dto);

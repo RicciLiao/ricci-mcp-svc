@@ -21,16 +21,16 @@ public class McpProviderInfoDto implements PayloadData {
     private Instant createdDtm;
     private Long updatedBy;
     private Instant updatedDtm;
-    private Instant version;
+    private Long version;
     private McpProviderPassInfoDto passInfo;
-    private McpProviderStatusDto status;
+    private Boolean deleted;
 
-    public McpProviderStatusDto getStatus() {
-        return status;
+    public Boolean getDeleted() {
+        return deleted;
     }
 
-    public void setStatus(McpProviderStatusDto status) {
-        this.status = status;
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public McpProviderPassInfoDto getPassInfo() {
@@ -129,22 +129,22 @@ public class McpProviderInfoDto implements PayloadData {
         this.updatedDtm = updatedDtm;
     }
 
-    public Instant getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Instant version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof McpProviderInfoDto dto)) return false;
-        return Objects.equals(getId(), dto.getId()) && Objects.equals(getConsumer(), dto.getConsumer()) && Objects.equals(getStore(), dto.getStore()) && Objects.equals(getProvider(), dto.getProvider()) && Objects.equals(getTtlSeconds(), dto.getTtlSeconds()) && Objects.equals(getActive(), dto.getActive()) && Objects.equals(getStatical(), dto.getStatical()) && Objects.equals(getCreatedBy(), dto.getCreatedBy()) && Objects.equals(getCreatedDtm(), dto.getCreatedDtm()) && Objects.equals(getUpdatedBy(), dto.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), dto.getUpdatedDtm()) && Objects.equals(getVersion(), dto.getVersion()) && Objects.equals(getPassInfo(), dto.getPassInfo());
+        if (!(o instanceof McpProviderInfoDto that)) return false;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getConsumer(), that.getConsumer()) && Objects.equals(getStore(), that.getStore()) && Objects.equals(getProvider(), that.getProvider()) && Objects.equals(getTtlSeconds(), that.getTtlSeconds()) && Objects.equals(getActive(), that.getActive()) && Objects.equals(getStatical(), that.getStatical()) && Objects.equals(getCreatedBy(), that.getCreatedBy()) && Objects.equals(getCreatedDtm(), that.getCreatedDtm()) && Objects.equals(getUpdatedBy(), that.getUpdatedBy()) && Objects.equals(getUpdatedDtm(), that.getUpdatedDtm()) && Objects.equals(getVersion(), that.getVersion()) && Objects.equals(getPassInfo(), that.getPassInfo()) && Objects.equals(getDeleted(), that.getDeleted());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getConsumer(), getStore(), getProvider(), getTtlSeconds(), getActive(), getStatical(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion(), getPassInfo());
+        return Objects.hash(getId(), getConsumer(), getStore(), getProvider(), getTtlSeconds(), getActive(), getStatical(), getCreatedBy(), getCreatedDtm(), getUpdatedBy(), getUpdatedDtm(), getVersion(), getPassInfo(), getDeleted());
     }
 }

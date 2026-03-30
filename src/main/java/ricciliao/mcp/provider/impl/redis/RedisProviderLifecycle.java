@@ -29,7 +29,7 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
 
     @Override
     protected void preCreation(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
-        try (Jedis jedis = authJedisPool.getResource()) {
+        try (Jedis jedis = this.authJedisPool.getResource()) {
             if (!jedis.aclUsers().contains(info.getConsumer())) {
                 jedis.aclSetUser(
                         info.getConsumer(),
@@ -76,7 +76,14 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
 
     @Override
     protected void preDestruction(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
-        //do nothing
+        this.authJedisPooled.ftDropIndexDD(RedisHelper.indexName(provider.getIdentifier()));
+        if (!this.authJedisPooled.exists(RedisHelper.keyPrefix(info.getConsumer(), info.getStore()) + "*")) {
+            try (Jedis jedis = this.authJedisPool.getResource()) {
+                if (jedis.aclUsers().contains(info.getConsumer())) {
+                    jedis.aclDelUser(info.getConsumer());
+                }
+            }
+        }
     }
 
     @Override

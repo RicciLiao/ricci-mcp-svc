@@ -2,11 +2,11 @@ package ricciliao.mcp.pojo.bo;
 
 import ricciliao.mcp.pojo.po.McpProviderInfoPo;
 import ricciliao.mcp.pojo.po.McpProviderPassInfoPo;
-import ricciliao.mcp.pojo.po.McpProviderStatusPo;
 import ricciliao.mcp.pojo.po.McpProviderTypePo;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class McpProviderInfoBo implements Serializable {
     @Serial
@@ -17,26 +17,15 @@ public class McpProviderInfoBo implements Serializable {
 
     public McpProviderInfoBo(McpProviderInfoPo info,
                              McpProviderPassInfoPo passInfo,
-                             McpProviderTypePo type,
-                             McpProviderStatusPo status) {
+                             McpProviderTypePo type) {
         this.info = info;
         this.passInfo = passInfo;
         this.type = type;
-        this.status = status;
     }
 
     private McpProviderInfoPo info;
     private McpProviderPassInfoPo passInfo;
     private McpProviderTypePo type;
-    private McpProviderStatusPo status;
-
-    public McpProviderStatusPo getStatus() {
-        return status;
-    }
-
-    public void setStatus(McpProviderStatusPo status) {
-        this.status = status;
-    }
 
     public McpProviderInfoPo getInfo() {
         return info;
@@ -60,5 +49,16 @@ public class McpProviderInfoBo implements Serializable {
 
     public void setType(McpProviderTypePo type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof McpProviderInfoBo that)) return false;
+        return Objects.equals(getInfo(), that.getInfo()) && Objects.equals(getPassInfo(), that.getPassInfo()) && Objects.equals(getType(), that.getType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getInfo(), getPassInfo(), getType());
     }
 }

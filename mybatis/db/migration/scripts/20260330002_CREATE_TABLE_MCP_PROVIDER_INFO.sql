@@ -11,7 +11,7 @@ create table mcp_provider_info
     created_dtm datetime(6) not null,
     updated_by bigint     not null,
     updated_dtm datetime(6) not null,
-    version     datetime(6) not null,
+    version     bigint not null,
     constraint cache_provider_info_uk
         unique (consumer, store),
     constraint cache_provider_info_statical_check

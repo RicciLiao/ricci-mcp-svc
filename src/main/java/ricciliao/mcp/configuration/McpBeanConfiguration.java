@@ -13,11 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ricciliao.mcp.component.McpCacheBatchConverter;
 import ricciliao.mcp.component.McpCacheSingleConverter;
 import ricciliao.mcp.component.McpIdentifierResolver;
-import ricciliao.mcp.component.McpProviderPipeline;
 import ricciliao.mcp.provider.AbstractMcpProviderFactory;
 import ricciliao.mcp.provider.McpProviderFactoryContext;
 import ricciliao.mcp.provider.McpProviderRegistry;
-import ricciliao.mcp.service.McpProviderInfoService;
 
 import java.util.List;
 
@@ -57,13 +55,6 @@ public class McpBeanConfiguration implements WebMvcConfigurer {
     public McpProviderFactoryContext mcpProviderFactoryContext(ObjectProvider<AbstractMcpProviderFactory> provider) {
 
         return new McpProviderFactoryContext(provider.stream().toList());
-    }
-
-    @Bean
-    public McpProviderPipeline mcpProviderPipeline(@Autowired McpProviderInfoService service,
-                                                   @Autowired McpProviderFactoryContext context) {
-
-        return new McpProviderPipeline(service, context);
     }
 
 }

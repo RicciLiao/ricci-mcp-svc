@@ -100,29 +100,19 @@ public interface McpProviderInfoRepository extends JpaRepository<McpProviderInfo
     @Override
     <S extends McpProviderInfoPo> Optional<S> findOne(Example<S> example);
 
-/*    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_, status) " +
-            "from McpProviderInfoPo po " +
-            "inner join McpProviderTypePo type_ on type_.id = po.provider " +
-            "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id " +
-            "left join McpProviderStatusPo status on status.providerInfoId = po.id " +
-            "where po.active = true and po.id = :id " +
-            "and (status.status = true or status.providerInfoId is null)")
-    McpProviderInfoBo initialize(@Param("id") Long id);*/
-
     boolean existsByConsumerAndStore(String consumer, String store);
 
-    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_, status) " +
+    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_) " +
             "from McpProviderInfoPo po " +
             "inner join McpProviderTypePo type_ on type_.id = po.provider " +
             "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id " +
-            "left join McpProviderStatusPo status on status.providerInfoId = po.id " +
             "where po.id = :id ")
     McpProviderInfoBo fullyGet(@Param("id") Long id);
 
-    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_, status) " +
+    @Query("select new ricciliao.mcp.pojo.bo.McpProviderInfoBo(po, passkey, type_) " +
             "from McpProviderInfoPo po " +
             "inner join McpProviderTypePo type_ on type_.id = po.provider " +
-            "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id " +
-            "left join McpProviderStatusPo status on status.providerInfoId = po.id ")
+            "left join McpProviderPassInfoPo passkey on passkey.providerInfoId = po.id "
+    )
     List<McpProviderInfoBo> fullyList();
 }

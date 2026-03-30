@@ -1,6 +1,7 @@
 package ricciliao.mcp.provider;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import ricciliao.mcp.pojo.bo.McpProviderInfoBo;
 import ricciliao.x.component.exception.AbstractException;
 
@@ -10,7 +11,7 @@ public interface McpProviderLifecycle {
 
     void postCreation(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoBo bo);
 
-    @Nonnull
+    @Nullable
     AbstractMcpProvider preDestruction(@Nonnull McpProviderInfoBo bo);
 
     void postDestruction(@Nonnull McpProviderInfoBo bo);
