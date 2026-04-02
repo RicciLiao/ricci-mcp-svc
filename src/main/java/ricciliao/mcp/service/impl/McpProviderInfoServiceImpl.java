@@ -67,6 +67,12 @@ public class McpProviderInfoServiceImpl implements McpProviderInfoService {
         return providerInfoRepository.fullyList();
     }
 
+    @Override
+    public String passkey(Long id) {
+
+        return providerPassInfoRepository.findById(id).map(McpProviderPassInfoPo::getPassKey).orElse(null);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long insert(@Nonnull McpProviderInfoDto dto) throws AbstractException {

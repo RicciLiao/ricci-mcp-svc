@@ -1,13 +1,13 @@
 package ricciliao.mcp.pojo.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ricciliao.x.component.payload.PayloadData;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-public class McpProviderPassInfoDto implements Serializable {
+public class McpProviderPassInfoDto implements PayloadData {
     @Serial
     private static final long serialVersionUID = -7737771839883533097L;
 

@@ -34,7 +34,7 @@ public class RedisProviderFactory extends AbstractMcpProviderFactory {
     @Override
     protected AbstractMcpProvider create(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
         RedisProviderProperties providerProperties = (RedisProviderProperties) this.providerProperties;
-        providerProperties.setUsername(info.getConsumer());
+        providerProperties.setUsername(RedisHelper.userName(info.getConsumer(), info.getStore()));
         providerProperties.setPassword(passInfo.getPassKey());
 
         return

@@ -33,50 +33,45 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
 
     @Override
     protected void preCreation(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
+        String userName = MongoHelper.userName(info.getConsumer(), info.getStore());
         Document document =
                 authMongoClient
                         .getDatabase(authenticationDatabase)
-                        .runCommand(
-                                BsonDocument.parse(
-                                        String.format(
-                                                "{usersInfo: \"%s\", filter: {roles: [{role: \"readWrite\", db: \"%s\"}]}}",
-                                                info.getConsumer(), info.getConsumer()
-                                        )
-                                )
-                        );
+                        .runCommand(BsonDocument.parse(String.format(
+                                "{usersInfo: \"%s\", filter: {roles: [{role: \"readWrite\", db: \"%s\"}]}}",
+                                userName, info.getConsumer()
+                        )));
         if (document.getList("users", Document.class).isEmpty()) {
             authMongoClient
                     .getDatabase(authenticationDatabase)
-                    .runCommand(
-                            BsonDocument.parse(String.format(
-                                    "{createUser: \"%s\", pwd: \"%s\", roles: [{role: \"readWrite\", db: \"%s\"}]}",
-                                    info.getConsumer(), passInfo.getPassKey(), info.getConsumer()
-                            ))
-                    );
+                    .runCommand(BsonDocument.parse(String.format(
+                            "{createUser: \"%s\", pwd: \"%s\", roles: [{role: \"readWrite\", db: \"%s\"}]}",
+                            userName, passInfo.getPassKey(), info.getConsumer())
+                    ));
         }
     }
 
     @Override
     protected void postCreation(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
-        String ttlIndexName = provider.getIdentifier() + "_ttl_index";
+        String indexName = MongoHelper.indexName(info.getConsumer(), info.getStore());
         MongoCollection<ProviderCache> mongoCollection =
                 authMongoClient
-                        .getDatabase(provider.getIdentifier().getConsumer())
-                        .getCollection(provider.getIdentifier().getStore(), ProviderCache.class);
+                        .getDatabase(info.getConsumer())
+                        .getCollection(info.getStore(), ProviderCache.class);
         if (
                 mongoCollection
                         .listIndexes()
                         .into(new ArrayList<>())
                         .stream()
-                        .filter(index -> ttlIndexName.equalsIgnoreCase(index.getString("name")))
+                        .filter(index -> indexName.equalsIgnoreCase(index.getString("name")))
                         .findAny()
                         .isEmpty()
-                        && !Boolean.TRUE.equals(info.getStatical())
+                && !Boolean.TRUE.equals(info.getStatical())
         ) {
             mongoCollection.createIndex(
                     Indexes.ascending(provider.getPropertyFieldName(McpCriteria.Property.TTL)),
                     new IndexOptions()
-                            .name(ttlIndexName)
+                            .name(indexName)
                             .expireAfter(provider.getTtlSeconds().getSeconds(), TimeUnit.SECONDS)
                             .background(true)
             );
@@ -85,7 +80,13 @@ public class MongoProviderLifecycle extends AbstractMcpProviderLifecycle {
 
     @Override
     protected void preDestruction(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
-        //do nothing
+        authMongoClient.getDatabase(info.getConsumer()).drop();
+        authMongoClient
+                .getDatabase(authenticationDatabase)
+                .runCommand(BsonDocument.parse(String.format(
+                        "{dropUser: \"%s\"}",
+                        MongoHelper.userName(info.getConsumer(), info.getStore())
+                )));
     }
 
     @Override

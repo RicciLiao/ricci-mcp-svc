@@ -38,7 +38,7 @@ public class McpProviderFactoryContext {
         Optional<? extends AbstractMcpProviderFactory> factory = this.get(bo);
         if (factory.isEmpty()) {
 
-            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getInfo().getConsumer(), bo.getInfo().getStore()));
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getType().getProvider()));
         }
 
         return factory.get().create(bo);
@@ -48,7 +48,7 @@ public class McpProviderFactoryContext {
         Optional<AbstractMcpProviderFactory> factory = this.get(bo);
         if (factory.isEmpty()) {
 
-            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getInfo().getConsumer(), bo.getInfo().getStore()));
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_NOT_EXISTED.format(bo.getType().getProvider()));
         }
         factory.get().destroy(bo);
     }

@@ -29,10 +29,11 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
 
     @Override
     protected void preCreation(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) {
+        String userName = RedisHelper.userName(info.getConsumer(), info.getStore());
         try (Jedis jedis = this.authJedisPool.getResource()) {
-            if (!jedis.aclUsers().contains(info.getConsumer())) {
+            if (!jedis.aclUsers().contains(userName)) {
                 jedis.aclSetUser(
-                        info.getConsumer(),
+                        userName,
                         "on",
                         ">" + passInfo.getPassKey(),
                         "~" + RedisHelper.keyPrefix(info.getConsumer(), info.getStore()) + "*",
@@ -65,10 +66,7 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
                     indexName,
                     IndexOptions
                             .defaultOptions()
-                            .setDefinition(
-                                    new IndexDefinition(IndexDefinition.Type.JSON)
-                                            .setPrefixes(prefix)
-                            ),
+                            .setDefinition(new IndexDefinition(IndexDefinition.Type.JSON).setPrefixes(prefix)),
                     Schema.from(id, createdDtm, updatedDtm)
             );
         }
@@ -77,12 +75,8 @@ public class RedisProviderLifecycle extends AbstractMcpProviderLifecycle {
     @Override
     protected void preDestruction(@Nonnull AbstractMcpProvider provider, @Nonnull McpProviderInfoPo info) {
         this.authJedisPooled.ftDropIndexDD(RedisHelper.indexName(provider.getIdentifier()));
-        if (!this.authJedisPooled.exists(RedisHelper.keyPrefix(info.getConsumer(), info.getStore()) + "*")) {
-            try (Jedis jedis = this.authJedisPool.getResource()) {
-                if (jedis.aclUsers().contains(info.getConsumer())) {
-                    jedis.aclDelUser(info.getConsumer());
-                }
-            }
+        try (Jedis jedis = this.authJedisPool.getResource()) {
+            jedis.aclDelUser(RedisHelper.userName(info.getConsumer(), info.getStore()));
         }
     }
 

@@ -22,7 +22,7 @@ public class MongoProviderFactory extends AbstractMcpProviderFactory {
     @Override
     protected AbstractMcpProvider create(@Nonnull McpProviderInfoPo info, @Nonnull McpProviderPassInfoPo passInfo) throws AbstractException {
         MongoProviderProperties providerProperties = (MongoProviderProperties) this.providerProperties;
-        providerProperties.setUsername(info.getConsumer());
+        providerProperties.setUsername(MongoHelper.userName(info.getConsumer(), info.getStore()));
         providerProperties.setDatabase(info.getConsumer());
         providerProperties.setPassword(passInfo.getPassKey().toCharArray());
 

@@ -12,4 +12,6 @@ public interface McpProviderInfoService extends CurdService<McpProviderInfoDto> 
 
     List<McpProviderInfoBo> fullyList();
 
+    String passkey(Long id);
+
 }

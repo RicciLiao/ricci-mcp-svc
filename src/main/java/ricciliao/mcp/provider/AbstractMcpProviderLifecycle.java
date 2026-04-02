@@ -30,7 +30,7 @@ public abstract class AbstractMcpProviderLifecycle implements McpProviderLifecyc
     public void preCreation(@Nonnull McpProviderInfoBo bo) throws AbstractException {
         if (Boolean.TRUE.equals(this.registry.exists(new McpIdentifier(bo.getInfo().getConsumer(), bo.getInfo().getStore())))) {
 
-            throw new DataException(McpSecondaryCodeEnum.PROVIDER_FACTORY_EXISTED);
+            throw new DataException(McpSecondaryCodeEnum.PROVIDER_NOT_FIND);
         }
         this.preCreation(bo.getInfo(), bo.getPassInfo());
     }
