@@ -107,8 +107,9 @@ public class MongoProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean delete(McpQuery query) {
-        DeleteResult result = this.mongoCollection.deleteMany(this.convert2Filter(query));
+    public boolean delete(List<String> idList) {
+        DeleteResult result =
+                this.mongoCollection.deleteMany(Filters.in(super.getPropertyFieldName(McpCriteria.Property.ID), idList));
 
         return result.getDeletedCount() > 0;
     }

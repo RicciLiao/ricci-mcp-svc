@@ -5,6 +5,8 @@ import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
 import ricciliao.x.mcp.McpProviderInfo;
 import ricciliao.x.mcp.query.McpQuery;
 
+import java.util.List;
+
 public interface McpProviderRepository {
 
     boolean create(AbstractProviderCacheMessage.Single single);
@@ -23,7 +25,7 @@ public interface McpProviderRepository {
     @Nonnull
     AbstractProviderCacheMessage.Batch list(McpQuery query);
 
-    boolean delete(McpQuery query);
+    boolean delete(List<String> idList);
 
     McpProviderInfo info();
 

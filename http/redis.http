@@ -18,6 +18,18 @@ Cache-Store: redis
 }
 
 ###
+POST http://192.168.165.34:8083/operation/batch/delete
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: redis
+
+{
+  "idList": [
+    "IpGy06Pc03CL","rp4ep7jY7ZfC"
+  ]
+}
+
+###
 PUT http://localhost:8083/operation/batch
 Content-Type: application/json
 Cache-Customer: dummy
@@ -116,7 +128,7 @@ Cache-Store: redis
 ###
 
 ###
-POST http://localhost:8083/operation
+POST http://192.168.165.34:8083/operation
 Content-Type: application/json
 Cache-Customer: dummy
 Cache-Store: redis

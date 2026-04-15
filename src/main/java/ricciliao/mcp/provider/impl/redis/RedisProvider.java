@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
@@ -58,17 +57,17 @@ public class RedisProvider extends AbstractMcpProvider {
         try {
 
             return 1L ==
-                    Long.parseLong(
-                            this.jedisPooled.evalsha(
-                                    this.upsertScript,
-                                    Collections.singletonList(this.key(single.getData().getUid())),
-                                    Arrays.asList(
-                                            this.objectMapper.writeValueAsString(single.getData()),
-                                            String.valueOf(super.getTtlSeconds().getSeconds()),
-                                            String.valueOf(1)
-                                    )
-                            ).toString()
-                    );
+                   Long.parseLong(
+                           this.jedisPooled.evalsha(
+                                   this.upsertScript,
+                                   Collections.singletonList(this.key(single.getData().getUid())),
+                                   Arrays.asList(
+                                           this.objectMapper.writeValueAsString(single.getData()),
+                                           String.valueOf(super.getTtlSeconds().getSeconds()),
+                                           String.valueOf(1)
+                                   )
+                           ).toString()
+                   );
         } catch (Exception e) {
             logger.error(OP_FAILED, super.getIdentifier(), e);
 
@@ -81,17 +80,17 @@ public class RedisProvider extends AbstractMcpProvider {
         try {
 
             return 1L ==
-                    Long.parseLong(
-                            this.jedisPooled.evalsha(
-                                    this.upsertScript,
-                                    Collections.singletonList(this.key(single.getData().getUid())),
-                                    Arrays.asList(
-                                            this.objectMapper.writeValueAsString(single.getData()),
-                                            String.valueOf(super.getTtlSeconds().getSeconds()),
-                                            String.valueOf(0)
-                                    )
-                            ).toString()
-                    );
+                   Long.parseLong(
+                           this.jedisPooled.evalsha(
+                                   this.upsertScript,
+                                   Collections.singletonList(this.key(single.getData().getUid())),
+                                   Arrays.asList(
+                                           this.objectMapper.writeValueAsString(single.getData()),
+                                           String.valueOf(super.getTtlSeconds().getSeconds()),
+                                           String.valueOf(0)
+                                   )
+                           ).toString()
+                   );
         } catch (Exception e) {
             logger.error(OP_FAILED, super.getIdentifier(), e);
 
@@ -101,20 +100,20 @@ public class RedisProvider extends AbstractMcpProvider {
 
     @Nonnull
     @Override
-    public AbstractProviderCacheMessage.Single get(String key) {
+    public AbstractProviderCacheMessage.Single get(String id) {
 
         return AbstractProviderCacheMessage.of(
                 this.objectMapper.convertValue(
-                        this.jedisPooled.jsonGet(this.key(key)),
+                        this.jedisPooled.jsonGet(this.key(id)),
                         ProviderCache.class
                 )
         );
     }
 
     @Override
-    public boolean delete(String key) {
+    public boolean delete(String id) {
 
-        return this.jedisPooled.del(this.key(key)) == 1L;
+        return this.jedisPooled.del(this.key(id)) == 1L;
     }
 
     @Override
@@ -142,7 +141,7 @@ public class RedisProvider extends AbstractMcpProvider {
         }
 
         return batch.getData().length ==
-                responseList.stream().mapToLong(r -> Long.parseLong(r.get().toString())).sum();
+               responseList.stream().mapToLong(r -> Long.parseLong(r.get().toString())).sum();
     }
 
     @Override
@@ -170,7 +169,7 @@ public class RedisProvider extends AbstractMcpProvider {
         }
 
         return batch.getData().length ==
-                responseList.stream().mapToLong(r -> Long.parseLong(r.get().toString())).sum();
+               responseList.stream().mapToLong(r -> Long.parseLong(r.get().toString())).sum();
     }
 
     @Nonnull
@@ -198,22 +197,9 @@ public class RedisProvider extends AbstractMcpProvider {
     }
 
     @Override
-    public boolean delete(McpQuery query) {
-        boolean finish = false;
-        while (!finish) {
-            AbstractProviderCacheMessage.Batch batch = this.list(query);
-            if (ArrayUtils.isNotEmpty(batch.getData())) {
-                this.jedisPooled.del(
-                        Arrays.stream(batch.getData())
-                                .map(dto -> this.key(dto.getUid()))
-                                .toArray(String[]::new)
-                );
-            } else {
-                finish = true;
-            }
-        }
+    public boolean delete(List<String> idList) {
 
-        return true;
+        return this.jedisPooled.del(idList.stream().map(this::key).toList().toArray(new String[0])) == idList.size();
     }
 
     @Override
@@ -275,8 +261,8 @@ public class RedisProvider extends AbstractMcpProvider {
             searchQ = searchQ.limit(0, McpConstants.DEFAULT_CACHE_OP_BATCH_LIMIT);
         }
         if (Objects.nonNull(query.getSortBy())
-                && Objects.nonNull(query.getSortDirection())
-                && Objects.nonNull(super.getPropertyFieldName(query.getSortBy()))) {
+            && Objects.nonNull(query.getSortDirection())
+            && Objects.nonNull(super.getPropertyFieldName(query.getSortBy()))) {
             searchQ.setSortBy(
                     this.getPropertyFieldName(query.getSortBy()),
                     McpCriteria.Sort.Direction.ASC.equals(query.getSortDirection())

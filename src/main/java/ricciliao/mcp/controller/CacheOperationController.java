@@ -17,6 +17,7 @@ import ricciliao.x.component.payload.PayloadData;
 import ricciliao.x.component.payload.SimplePayloadData;
 import ricciliao.x.component.payload.response.Response;
 import ricciliao.x.component.payload.response.ResponseUtils;
+import ricciliao.x.mcp.McpCacheIdListDto;
 import ricciliao.x.mcp.McpIdentifier;
 import ricciliao.x.mcp.annotation.McpIdentifierHeader;
 import ricciliao.x.mcp.query.McpQuery;
@@ -83,11 +84,11 @@ public class CacheOperationController {
     }
 
     @Operation(description = "Batch delete existed records for the consumer(with identifier).")
-    @DeleteMapping("/batch")
+    @PostMapping("/batch/delete")
     public Response<PayloadData> delete(@McpIdentifierHeader McpIdentifier identifier,
-                                        @RequestBody McpQuery query) {
+                                        @RequestBody McpCacheIdListDto requestDto) {
 
-        return ResponseUtils.success(SimplePayloadData.of(cacheOperationService.delete(identifier, query)));
+        return ResponseUtils.success(SimplePayloadData.of(cacheOperationService.delete(identifier, requestDto)));
     }
 
     @Operation(description = "Retrieve list of existed record for the consumer(with identifier).")

@@ -2,6 +2,7 @@ package ricciliao.mcp.service;
 
 
 import ricciliao.mcp.pojo.AbstractProviderCacheMessage;
+import ricciliao.x.mcp.McpCacheIdListDto;
 import ricciliao.x.mcp.McpIdentifier;
 import ricciliao.x.mcp.McpProviderInfo;
 import ricciliao.x.mcp.query.McpQuery;
@@ -22,7 +23,7 @@ public interface CacheOperationService {
 
     AbstractProviderCacheMessage.Batch list(McpIdentifier identifier, McpQuery query);
 
-    boolean delete(McpIdentifier identifier, McpQuery query);
+    boolean delete(McpIdentifier identifier, McpCacheIdListDto requestDto);
 
     McpProviderInfo info(McpIdentifier identifier);
 

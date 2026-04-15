@@ -8,6 +8,7 @@ import ricciliao.mcp.pojo.ProviderCache;
 import ricciliao.mcp.provider.McpProviderRegistry;
 import ricciliao.mcp.service.CacheOperationService;
 import ricciliao.x.component.random.RandomGenerator;
+import ricciliao.x.mcp.McpCacheIdListDto;
 import ricciliao.x.mcp.McpIdentifier;
 import ricciliao.x.mcp.McpProviderInfo;
 import ricciliao.x.mcp.query.McpQuery;
@@ -116,9 +117,9 @@ public class CacheOperationServiceImpl implements CacheOperationService {
     }
 
     @Override
-    public boolean delete(McpIdentifier identifier, McpQuery query) {
+    public boolean delete(McpIdentifier identifier, McpCacheIdListDto requestDto) {
 
-        return mcpProviderRegistry.get(identifier).delete(query);
+        return mcpProviderRegistry.get(identifier).delete(requestDto.getIdList());
     }
 
     @Override

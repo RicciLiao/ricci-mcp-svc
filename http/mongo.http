@@ -17,6 +17,18 @@ Cache-Store: mongo
 }
 
 ###
+POST http://192.168.165.34:8083/operation/batch/delete
+Content-Type: application/json
+Cache-Customer: dummy
+Cache-Store: mongo
+
+{
+  "idList": [
+    "0a7BmO26kG2U","kNUUy16uzb6H"
+  ]
+}
+
+###
 PUT http://localhost:8083/operation/batch
 Content-Type: application/json
 Cache-Customer: dummy
@@ -115,7 +127,7 @@ Cache-Store: mongo
 ###
 
 ###
-POST http://localhost:8083/operation
+POST http://192.168.165.34:8083/operation
 Content-Type: application/json
 Cache-Customer: dummy
 Cache-Store: mongo
