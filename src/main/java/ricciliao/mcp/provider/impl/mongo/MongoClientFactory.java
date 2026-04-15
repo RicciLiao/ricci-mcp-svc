@@ -56,7 +56,7 @@ public class MongoClientFactory implements AbstractMcpProviderFactory.ClientFact
         MongoClientSettings settings =
                 MongoClientSettings
                         .builder()
-                        .applyConnectionString(new PropertiesMongoConnectionDetails(mongoProperties).getConnectionString())
+                        .applyConnectionString(new PropertiesMongoConnectionDetails(mongoProperties, null).getConnectionString())
                         .credential(
                                 MongoCredential
                                         .createCredential(
