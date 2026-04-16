@@ -82,7 +82,8 @@ public class MongoProvider extends AbstractMcpProvider {
     public boolean update(AbstractProviderCacheMessage.Batch batch) {
         List<WriteModel<ProviderCache>> bulkOperations =
                 Arrays.stream(batch.getData())
-                        .map(cache -> new ReplaceOneModel<>(Filters.eq(super.getPropertyFieldName(McpCriteria.Property.ID), cache.getUid()), cache))
+                        .map(cache ->
+                                new ReplaceOneModel<>(Filters.eq(super.getPropertyFieldName(McpCriteria.Property.ID), cache.getUid()), cache))
                         .collect(Collectors.toList());
         BulkWriteResult result = this.mongoCollection.bulkWrite(bulkOperations);
 
@@ -108,10 +109,13 @@ public class MongoProvider extends AbstractMcpProvider {
 
     @Override
     public boolean delete(List<String> idList) {
-        DeleteResult result =
-                this.mongoCollection.deleteMany(Filters.in(super.getPropertyFieldName(McpCriteria.Property.ID), idList));
+        if (CollectionUtils.isEmpty(idList)) {
+            this.mongoCollection.deleteMany(new BsonDocument());
 
-        return result.getDeletedCount() > 0;
+            return true;
+        }
+
+        return this.mongoCollection.deleteMany(Filters.in(super.getPropertyFieldName(McpCriteria.Property.ID), idList)).getDeletedCount() > 0;
     }
 
     @Override
@@ -166,7 +170,7 @@ public class MongoProvider extends AbstractMcpProvider {
 
     private Bson convert2Sort(McpQuery query) {
         if (Objects.nonNull(query.getSortBy())
-                && Objects.nonNull(query.getSortDirection())) {
+            && Objects.nonNull(query.getSortDirection())) {
             String name = super.getPropertyFieldName(query.getSortBy());
 
             return switch (query.getSortDirection()) {

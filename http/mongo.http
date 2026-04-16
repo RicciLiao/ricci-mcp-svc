@@ -23,9 +23,7 @@ Cache-Customer: dummy
 Cache-Store: mongo
 
 {
-  "idList": [
-    "0a7BmO26kG2U","kNUUy16uzb6H"
-  ]
+  "idList": []
 }
 
 ###

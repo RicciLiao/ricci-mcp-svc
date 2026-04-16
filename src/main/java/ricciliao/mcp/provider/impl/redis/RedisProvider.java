@@ -8,6 +8,7 @@ import org.apache.commons.collections4.MapUtils;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+import redis.clients.jedis.search.Document;
 import redis.clients.jedis.search.Query;
 import redis.clients.jedis.search.SearchResult;
 import ricciliao.mcp.common.McpConstants;
@@ -198,6 +199,29 @@ public class RedisProvider extends AbstractMcpProvider {
 
     @Override
     public boolean delete(List<String> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            int batchSize = 1000;
+            int offset = 0;
+            long totalDeleted = 0;
+
+            while (true) {
+                SearchResult result = this.jedisPooled.ftSearch(
+                        this.indexName,
+                        new Query("*").limit(offset, batchSize)
+                );
+                if (CollectionUtils.isEmpty(result.getDocuments())) {
+                    break;
+                }
+                List<String> keys =
+                        result.getDocuments().stream()
+                                .map(Document::getId)
+                                .toList();
+                totalDeleted += this.jedisPooled.del(keys.toArray(new String[0]));
+                offset += batchSize;
+            }
+
+            return totalDeleted > 0;
+        }
 
         return this.jedisPooled.del(idList.stream().map(this::key).toList().toArray(new String[0])) == idList.size();
     }

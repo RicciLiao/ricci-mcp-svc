@@ -24,9 +24,7 @@ Cache-Customer: dummy
 Cache-Store: redis
 
 {
-  "idList": [
-    "IpGy06Pc03CL","rp4ep7jY7ZfC"
-  ]
+  "idList": []
 }
 
 ###
