@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-import ricciliao.x.component.persistence.ModifiablePo;
+import ricciliao.x.component.persistence.ModifiableEntity;
 
 import java.io.Serial;
 import java.time.Instant;
@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "mcp_provider_info")
-public class McpProviderInfoPo implements ModifiablePo {
+public class McpProviderInfoPo implements ModifiableEntity {
     @Serial
     private static final long serialVersionUID = 5876055436800486469L;
 
